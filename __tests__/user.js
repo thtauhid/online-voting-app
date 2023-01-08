@@ -51,4 +51,10 @@ describe("User", () => {
     expect(res.status).toBe(302);
     expect(res.header.location).toContain("/admin");
   });
+
+  test("User Logout", async () => {
+    const res = await agent.get("/logout");
+    expect(res.status).toBe(302);
+    expect(res.header.location).toContain("/login");
+  });
 });

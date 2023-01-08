@@ -121,6 +121,13 @@ app.post(
   })
 );
 
+app.get("/logout", async (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    return res.redirect("/login");
+  });
+});
+
 app.get("/admin", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
   res.render("admin");
 });
