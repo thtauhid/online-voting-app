@@ -115,7 +115,7 @@ app.get("/login", async (req, res) => {
 app.post(
   "/session",
   passport.authenticate("local", {
-    successRedirect: "/admin",
+    successRedirect: "/elections",
     failureRedirect: "/login",
     failureFlash: true,
   })
@@ -126,10 +126,6 @@ app.get("/logout", async (req, res, next) => {
     if (err) return next(err);
     return res.redirect("/login");
   });
-});
-
-app.get("/admin", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
-  res.render("admin");
 });
 
 app.get(
@@ -143,7 +139,24 @@ app.get(
   }
 );
 
-// WIP
+app.get("/elections", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
+  Election.findAll({
+    where: {
+      adminId: req.user.id,
+    },
+  })
+    .then((elections) => {
+      res.render("elections/index", {
+        title: "My Elections",
+        elections,
+      });
+    })
+    .catch((error) => {
+      req.flash("error", error.message);
+      res.redirect("/");
+    });
+});
+
 app.post(
   "/elections",
   connectEnsureLogin.ensureLoggedIn(),
