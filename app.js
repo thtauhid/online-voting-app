@@ -73,8 +73,8 @@ passport.deserializeUser(async (id, done) => {
     });
 });
 
-app.use((request, response, next) => {
-  response.locals.messages = request.flash();
+app.use((req, res, next) => {
+  res.locals.messages = req.flash();
   next();
 });
 
