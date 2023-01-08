@@ -12,7 +12,7 @@ const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const { User } = require("./models");
+const { User, Election } = require("./models");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -131,5 +131,56 @@ app.get("/logout", async (req, res, next) => {
 app.get("/admin", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
   res.render("admin");
 });
+
+app.get(
+  "/elections/new",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    res.render("elections/new", {
+      title: "Create New Election",
+      csrfToken: req.csrfToken(),
+    });
+  }
+);
+
+// WIP
+app.post(
+  "/elections",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const { title, description } = req.body;
+    Election.create({
+      title,
+      description,
+      adminId: req.user.id,
+    })
+      .then((election) => {
+        res.redirect(`/elections/${election.id}`);
+      })
+      .catch((error) => {
+        req.flash("error", error.message);
+        res.redirect("/elections/new");
+      });
+  }
+);
+
+app.get(
+  "/elections/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const { id } = req.params;
+    Election.findByPk(id)
+      .then((election) => {
+        res.render("elections/show", {
+          title: election.title,
+          election,
+        });
+      })
+      .catch((error) => {
+        req.flash("error", error.message);
+        res.redirect("/admin");
+      });
+  }
+);
 
 module.exports = app;
