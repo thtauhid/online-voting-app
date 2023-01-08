@@ -7,6 +7,8 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 const session = require("express-session");
+const connectEnsureLogin = require("connect-ensure-login");
+const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -30,6 +32,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 passport.use(
   new localStrategy(
@@ -68,6 +71,11 @@ passport.deserializeUser(async (id, done) => {
     .catch((err) => {
       done(err, null);
     });
+});
+
+app.use((request, response, next) => {
+  response.locals.messages = request.flash();
+  next();
 });
 
 app.get("/", (req, res) => {
@@ -109,11 +117,11 @@ app.post(
   passport.authenticate("local", {
     successRedirect: "/admin",
     failureRedirect: "/login",
-    // failureFlash: true,
+    failureFlash: true,
   })
 );
 
-app.get("/admin", (req, res) => {
+app.get("/admin", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
   res.render("admin");
 });
 
