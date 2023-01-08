@@ -37,4 +37,18 @@ describe("User", () => {
     const res = await agent.post("/user").send({ ...user, _csrf: csrfToken });
     expect(res.status).toBe(200);
   });
+
+  test("User Login", async () => {
+    const response = await agent.get("/login");
+    const csrfToken = getCsrfToken(response.text);
+    const user = {
+      email: "john.doe@example.com",
+      password: "password",
+    };
+    const res = await agent
+      .post("/session")
+      .send({ ...user, _csrf: csrfToken });
+    expect(res.status).toBe(302);
+    expect(res.header.location).toContain("/admin");
+  });
 });

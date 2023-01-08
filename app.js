@@ -97,4 +97,24 @@ app.post("/user", async (req, res) => {
     });
 });
 
+app.get("/login", async (req, res) => {
+  res.render("login", {
+    title: "Login",
+    csrfToken: req.csrfToken(),
+  });
+});
+
+app.post(
+  "/session",
+  passport.authenticate("local", {
+    successRedirect: "/admin",
+    failureRedirect: "/login",
+    // failureFlash: true,
+  })
+);
+
+app.get("/admin", (req, res) => {
+  res.render("admin");
+});
+
 module.exports = app;
