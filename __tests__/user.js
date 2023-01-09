@@ -35,7 +35,8 @@ describe("User", () => {
       password: "password",
     };
     const res = await agent.post("/user").send({ ...user, _csrf: csrfToken });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(302);
+    expect(res.header.location).toContain("/elections");
   });
 
   test("User Login", async () => {

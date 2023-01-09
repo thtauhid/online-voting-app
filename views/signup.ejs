@@ -17,6 +17,10 @@
         <div class="col-md-6 offset-md-3">
           <h1 class="text-center"><%= title %></h1>
           <form action="/user" method="POST">
+            <% if (messages.error) { %>
+            <div class="alert alert-danger"><%= messages.error %></div>
+            <% } %>
+
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <div class="form-group">
               <label for="name">Full Name</label>

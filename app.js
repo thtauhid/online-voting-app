@@ -99,11 +99,12 @@ app.post("/user", async (req, res) => {
     email,
     password: hashedPassword,
   })
-    .then((user) => {
-      res.send(user);
+    .then(() => {
+      res.redirect("/elections");
     })
     .catch((err) => {
-      res.send(err);
+      req.flash("error", err.message);
+      res.redirect("/signup");
     });
 });
 
