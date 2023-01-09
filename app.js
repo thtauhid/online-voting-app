@@ -12,7 +12,7 @@ const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const { User, Election, Question } = require("./models");
+const { User, Election, Question, Option } = require("./models");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -241,16 +241,49 @@ app.post(
 app.get("/elections/:electionId/questions/:questionId", async (req, res) => {
   const { questionId } = req.params;
   const question = await Question.findByPk(questionId);
-  // const options = await Option.findAll({
-  //   where: {
-  //     questionId,
-  //   }
-  // });
+  const options = await Option.findAll({
+    where: {
+      questionId,
+    },
+  });
   res.render("questions/single", {
     title: question.title,
     question,
-    // options
+    options,
   });
 });
+
+app.post(
+  "/elections/:electionId/questions/:questionId/options",
+  async (req, res) => {
+    const { title } = req.body;
+    const { electionId } = req.params;
+    const { questionId } = req.params;
+    await Option.create({
+      title,
+      questionId,
+    })
+      .then((option) => {
+        console.log({ option });
+        res.redirect(`/elections/${electionId}/questions/${questionId}`);
+      })
+      .catch((error) => {
+        req.flash("error", error.message);
+        res.redirect(`/elections/${electionId}/questions/${questionId}`);
+      });
+  }
+);
+
+app.get(
+  "/elections/:electionId/questions/:questionId/options/new",
+  async (req, res) => {
+    res.render("options/new", {
+      title: "Add New Option",
+      csrfToken: req.csrfToken(),
+      electionId: req.params.electionId,
+      questionId: req.params.questionId,
+    });
+  }
+);
 
 module.exports = app;
