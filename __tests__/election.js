@@ -78,4 +78,25 @@ describe("Election", () => {
     expect(response.statusCode).toBe(302);
     expect(response.header.location).toContain("/elections/1/questions/1");
   });
+
+  test("Create a option in question", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/1/questions/1/options/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/1/questions/1/options").send({
+      title: "Test Option",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    // Checking if the option is added to the question
+    response = await agent.get("/elections/1/questions/1");
+    const $ = cherio.load(response.text);
+    const firstListItem = $("ul > li")[0].children[0].data;
+
+    expect(firstListItem).toContain("Test Option");
+  });
 });
