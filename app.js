@@ -79,7 +79,9 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.render("index", {
+    title: "Home",
+  });
 });
 
 app.get("/signup", async (req, res) => {
@@ -161,10 +163,9 @@ app.post(
   "/elections",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
-    const { title, description } = req.body;
+    const { title } = req.body;
     Election.create({
       title,
-      description,
       adminId: req.user.id,
     })
       .then((election) => {

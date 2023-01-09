@@ -21,7 +21,6 @@ module.exports = (sequelize, DataTypes) => {
           len: [5],
         },
       },
-      description: DataTypes.STRING,
       adminId: {
         type: DataTypes.INTEGER,
         references: {
