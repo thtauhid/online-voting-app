@@ -62,4 +62,20 @@ describe("Election", () => {
     expect(response.statusCode).toBe(302);
     expect(response.header.location).toContain("/elections/");
   });
+
+  test("Create a question", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/1/questions/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    const response = await agent.post("/elections/1/questions").send({
+      title: "Test Question",
+      description: "Test Description",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+    expect(response.header.location).toContain("/elections/1/questions/1");
+  });
 });

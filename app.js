@@ -12,7 +12,7 @@ const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const { User, Election } = require("./models");
+const { User, Election, Question } = require("./models");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -180,14 +180,20 @@ app.post(
 
 app.get(
   "/elections/:id",
-  connectEnsureLogin.ensureLoggedIn(),
+  // connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     const { id } = req.params;
+    const questions = await Question.findAll({
+      where: {
+        electionId: id,
+      },
+    });
     Election.findByPk(id)
       .then((election) => {
-        res.render("elections/show", {
+        res.render("elections/single", {
           title: election.title,
           election,
+          questions,
         });
       })
       .catch((error) => {
@@ -196,5 +202,55 @@ app.get(
       });
   }
 );
+
+app.get(
+  "/elections/:electionId/questions/new",
+  // connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    res.render("questions/new", {
+      title: "Create New Question",
+      csrfToken: req.csrfToken(),
+      electionId: req.params.electionId,
+    });
+  }
+);
+
+app.post(
+  "/elections/:electionId/questions",
+  // connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    // Get election id from params
+    const { title, description } = req.body;
+    const { electionId } = req.params;
+
+    Question.create({
+      title,
+      description,
+      electionId,
+    })
+      .then((question) => {
+        res.redirect(`/elections/${electionId}/questions/${question.id}`);
+      })
+      .catch((error) => {
+        req.flash("error", error.message);
+        res.redirect(`/elections/${electionId}/questions/new`);
+      });
+  }
+);
+
+app.get("/elections/:electionId/questions/:questionId", async (req, res) => {
+  const { questionId } = req.params;
+  const question = await Question.findByPk(questionId);
+  // const options = await Option.findAll({
+  //   where: {
+  //     questionId,
+  //   }
+  // });
+  res.render("questions/single", {
+    title: question.title,
+    question,
+    // options
+  });
+});
 
 module.exports = app;
