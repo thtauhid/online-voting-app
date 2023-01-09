@@ -155,6 +155,7 @@ app.get("/elections", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
     .then((elections) => {
       res.render("elections/index", {
         title: "My Elections",
+        user: req.user,
         elections,
       });
     })
