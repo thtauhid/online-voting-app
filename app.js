@@ -181,7 +181,7 @@ app.post(
 
 app.get(
   "/elections/:id",
-  // connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     const { id } = req.params;
     const questions = await Question.findAll({
@@ -206,7 +206,7 @@ app.get(
 
 app.get(
   "/elections/:electionId/questions/new",
-  // connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     res.render("questions/new", {
       title: "Create New Question",
@@ -218,7 +218,7 @@ app.get(
 
 app.post(
   "/elections/:electionId/questions",
-  // connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     // Get election id from params
     const { title, description } = req.body;
@@ -239,23 +239,28 @@ app.post(
   }
 );
 
-app.get("/elections/:electionId/questions/:questionId", async (req, res) => {
-  const { questionId } = req.params;
-  const question = await Question.findByPk(questionId);
-  const options = await Option.findAll({
-    where: {
-      questionId,
-    },
-  });
-  res.render("questions/single", {
-    title: question.title,
-    question,
-    options,
-  });
-});
+app.get(
+  "/elections/:electionId/questions/:questionId",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const { questionId } = req.params;
+    const question = await Question.findByPk(questionId);
+    const options = await Option.findAll({
+      where: {
+        questionId,
+      },
+    });
+    res.render("questions/single", {
+      title: question.title,
+      question,
+      options,
+    });
+  }
+);
 
 app.post(
   "/elections/:electionId/questions/:questionId/options",
+  connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     const { title } = req.body;
     const { electionId } = req.params;
@@ -277,6 +282,7 @@ app.post(
 
 app.get(
   "/elections/:electionId/questions/:questionId/options/new",
+  connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     res.render("options/new", {
       title: "Add New Option",
