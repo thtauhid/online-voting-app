@@ -103,7 +103,8 @@ app.post("/user", async (req, res) => {
       res.redirect("/elections");
     })
     .catch((err) => {
-      req.flash("error", err.message);
+      console.log(err);
+      req.flash("error", "Signup Failed.");
       res.redirect("/signup");
     });
 });
@@ -173,7 +174,8 @@ app.post(
         res.redirect(`/elections/${election.id}`);
       })
       .catch((error) => {
-        req.flash("error", error.message);
+        console.log(error);
+        req.flash("error", "Unable to create new election");
         res.redirect("/elections/new");
       });
   }
@@ -233,7 +235,8 @@ app.post(
         res.redirect(`/elections/${electionId}/questions/${question.id}`);
       })
       .catch((error) => {
-        req.flash("error", error.message);
+        console.log(error);
+        req.flash("error", "Unable to create question");
         res.redirect(`/elections/${electionId}/questions/new`);
       });
   }
@@ -274,7 +277,8 @@ app.post(
         res.redirect(`/elections/${electionId}/questions/${questionId}`);
       })
       .catch((error) => {
-        req.flash("error", error.message);
+        console.log(error);
+        req.flash("error", "Unable to create option");
         res.redirect(`/elections/${electionId}/questions/${questionId}`);
       });
   }
