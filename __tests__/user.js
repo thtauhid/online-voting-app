@@ -49,7 +49,7 @@ describe("User", () => {
       .post("/session")
       .send({ ...user, _csrf: csrfToken });
     expect(res.status).toBe(302);
-    expect(res.header.location).toContain("/admin");
+    expect(res.header.location).toContain("/elections");
   });
 
   test("User Logout", async () => {
