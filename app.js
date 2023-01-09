@@ -178,7 +178,10 @@ app.post(
       })
       .catch((error) => {
         console.log(error);
-        req.flash("error", "Unable to create new election");
+        req.flash(
+          "error",
+          "Unable to create new election. Minimum 5 character required."
+        );
         res.redirect("/elections/new");
       });
   }
@@ -239,7 +242,10 @@ app.post(
       })
       .catch((error) => {
         console.log(error);
-        req.flash("error", "Unable to create question");
+        req.flash(
+          "error",
+          "Unable to create question. Title has to be of minimum 5 character."
+        );
         res.redirect(`/elections/${electionId}/questions/new`);
       });
   }
@@ -281,8 +287,13 @@ app.post(
       })
       .catch((error) => {
         console.log(error);
-        req.flash("error", "Unable to create option");
-        res.redirect(`/elections/${electionId}/questions/${questionId}`);
+        req.flash(
+          "error",
+          "Unable to create option. Minimum 1 character required."
+        );
+        res.redirect(
+          `/elections/${electionId}/questions/${questionId}/options/new`
+        );
       });
   }
 );

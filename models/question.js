@@ -13,7 +13,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Question.init(
     {
-      title: DataTypes.STRING,
+      title: {
+        type: DataTypes.STRING,
+        validate: {
+          len: [5],
+        },
+      },
       description: DataTypes.STRING,
       electionId: DataTypes.INTEGER,
     },
