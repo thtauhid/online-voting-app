@@ -99,8 +99,11 @@ app.post("/user", async (req, res) => {
     email,
     password: hashedPassword,
   })
-    .then(() => {
-      res.redirect("/elections");
+    .then((user) => {
+      req.login(user, (err) => {
+        if (err) console.log(err);
+        return res.redirect("/elections");
+      });
     })
     .catch((err) => {
       console.log(err);
