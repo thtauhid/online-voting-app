@@ -15,6 +15,7 @@
     <div class="container mt-5">
       <div class="row">
         <div class="col-md-6 offset-md-3">
+          <%- include('../partials/nav'); %>
           <h1 class="text-center"><%= title %></h1>
           <form action="/elections/<%= electionId%>/questions" method="POST">
             <% if (messages.error) { %>
