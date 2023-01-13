@@ -10,6 +10,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    static async createQuestion(title, description, electionId) {
+      return await this.create({ title, description, electionId });
+    }
+
+    static async getQuestionsByElectionId(electionId) {
+      return await this.findAll({
+        where: {
+          electionId,
+        },
+      });
+    }
   }
   Question.init(
     {

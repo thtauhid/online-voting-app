@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    static async createOption(title, questionId) {
+      return this.create({ title, questionId });
+    }
   }
   Option.init(
     {

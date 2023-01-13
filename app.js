@@ -10,7 +10,6 @@ const session = require("express-session");
 const connectEnsureLogin = require("connect-ensure-login");
 const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
 
 const { User, Election, Question, Option } = require("./models");
 
@@ -93,23 +92,17 @@ app.get("/signup", async (req, res) => {
 
 app.post("/user", async (req, res) => {
   const { name, email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  await User.create({
-    name,
-    email,
-    password: hashedPassword,
-  })
-    .then((user) => {
-      req.login(user, (err) => {
-        if (err) console.log(err);
-        return res.redirect("/elections");
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      req.flash("error", "Signup Failed.");
-      res.redirect("/signup");
+
+  try {
+    const user = await User.createUser(name, email, password);
+    req.login(user, (error) => {
+      if (error) console.log(error);
+      return res.redirect("/elections");
     });
+  } catch (error) {
+    req.flash("error", "Signup Failed.");
+    res.redirect("/signup");
+  }
 });
 
 app.get("/login", async (req, res) => {
@@ -147,44 +140,37 @@ app.get(
 );
 
 app.get("/elections", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
-  Election.findAll({
-    where: {
-      adminId: req.user.id,
-    },
-  })
-    .then((elections) => {
-      res.render("elections/index", {
-        title: "My Elections",
-        user: req.user,
-        elections,
-      });
-    })
-    .catch((error) => {
-      req.flash("error", error.message);
-      res.redirect("/");
+  try {
+    const election = await Election.getElectionsByAdminId(req.user.id);
+    res.render("elections/index", {
+      title: "My Elections",
+      user: req.user,
+      election,
     });
+  } catch (error) {
+    req.flash("error", error.message);
+    res.redirect("/");
+  }
 });
 
 app.post(
   "/elections",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
-    const { title } = req.body;
-    Election.create({
-      title,
-      adminId: req.user.id,
-    })
-      .then((election) => {
-        res.redirect(`/elections/${election.id}`);
-      })
-      .catch((error) => {
-        console.log(error);
-        req.flash(
-          "error",
-          "Unable to create new election. Minimum 5 character required."
-        );
-        res.redirect("/elections/new");
-      });
+    try {
+      const election = await Election.createElection(
+        req.body.title,
+        req.user.id
+      );
+
+      res.redirect(`/elections/${election.id}`);
+    } catch (error) {
+      req.flash(
+        "error",
+        "Unable to create new election. Minimum 5 character required."
+      );
+      res.redirect("/elections/new");
+    }
   }
 );
 
@@ -192,24 +178,19 @@ app.get(
   "/elections/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
-    const { id } = req.params;
-    const questions = await Question.findAll({
-      where: {
-        electionId: id,
-      },
-    });
-    Election.findByPk(id)
-      .then((election) => {
-        res.render("elections/single", {
-          title: election.title,
-          election,
-          questions,
-        });
-      })
-      .catch((error) => {
-        req.flash("error", error.message);
-        res.redirect("/admin");
+    try {
+      const election = await Election.getElectionById(req.params.id);
+      const questions = await Question.getQuestionsByElectionId(req.params.id);
+
+      res.render("elections/single", {
+        title: election.title,
+        election,
+        questions,
       });
+    } catch (error) {
+      req.flash("error", error.message);
+      res.redirect("/admin");
+    }
   }
 );
 
@@ -229,26 +210,24 @@ app.post(
   "/elections/:electionId/questions",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
-    // Get election id from params
     const { title, description } = req.body;
     const { electionId } = req.params;
 
-    Question.create({
-      title,
-      description,
-      electionId,
-    })
-      .then((question) => {
-        res.redirect(`/elections/${electionId}/questions/${question.id}`);
-      })
-      .catch((error) => {
-        console.log(error);
-        req.flash(
-          "error",
-          "Unable to create question. Title has to be of minimum 5 character."
-        );
-        res.redirect(`/elections/${electionId}/questions/new`);
-      });
+    try {
+      const question = await Question.createQuestion(
+        title,
+        description,
+        electionId
+      );
+
+      res.redirect(`/elections/${electionId}/questions/${question.id}`);
+    } catch (error) {
+      req.flash(
+        "error",
+        "Unable to create question. Title has to be of minimum 5 character."
+      );
+      res.redirect(`/elections/${electionId}/questions/new`);
+    }
   }
 );
 
@@ -278,24 +257,19 @@ app.post(
     const { title } = req.body;
     const { electionId } = req.params;
     const { questionId } = req.params;
-    await Option.create({
-      title,
-      questionId,
-    })
-      .then((option) => {
-        console.log({ option });
-        res.redirect(`/elections/${electionId}/questions/${questionId}`);
-      })
-      .catch((error) => {
-        console.log(error);
-        req.flash(
-          "error",
-          "Unable to create option. Minimum 1 character required."
-        );
-        res.redirect(
-          `/elections/${electionId}/questions/${questionId}/options/new`
-        );
-      });
+
+    try {
+      await Option.createOption(title, questionId);
+      res.redirect(`/elections/${electionId}/questions/${questionId}`);
+    } catch (error) {
+      req.flash(
+        "error",
+        "Unable to create option. Minimum 1 character required."
+      );
+      res.redirect(
+        `/elections/${electionId}/questions/${questionId}/options/new`
+      );
+    }
   }
 );
 

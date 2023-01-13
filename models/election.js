@@ -10,6 +10,24 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    static async createElection(title, adminId) {
+      return await this.create({ title, adminId });
+    }
+
+    static async getSingleElection() {}
+
+    static async getElectionsByAdminId(id) {
+      return await this.findAll({
+        where: {
+          adminId: req.user.id,
+        },
+      });
+    }
+
+    static async getElectionById(id) {
+      return await this.findByPk(id);
+    }
   }
   Election.init(
     {
