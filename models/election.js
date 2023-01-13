@@ -15,12 +15,14 @@ module.exports = (sequelize, DataTypes) => {
       return await this.create({ title, adminId });
     }
 
-    static async getSingleElection() {}
+    static async getSingleElection() {
+      // return await this.findOne();
+    }
 
-    static async getElectionsByAdminId(id) {
+    static async getElectionsByAdminId(adminId) {
       return await this.findAll({
         where: {
-          adminId: req.user.id,
+          adminId,
         },
       });
     }

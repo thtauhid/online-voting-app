@@ -26,13 +26,14 @@ exports.createElection = async (req, res) => {
 // Get All Elections page
 exports.getElections = async (req, res) => {
   try {
-    const election = await Election.getElectionsByAdminId(req.user.id);
+    const elections = await Election.getElectionsByAdminId(req.user.id);
     res.render("elections/index", {
       title: "My Elections",
       user: req.user,
-      election,
+      elections,
     });
   } catch (error) {
+    console.log(error);
     req.flash("error", error.message);
     res.redirect("/");
   }
