@@ -20,7 +20,7 @@ exports.signUp = async (req, res) => {
     });
   } catch (error) {
     req.flash("error", "Signup Failed.");
-    res.redirect("/signup");
+    res.redirect("/auth/signup");
   }
 };
 
@@ -36,6 +36,6 @@ exports.loginPage = async (req, res) => {
 exports.logout = async (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-    return res.redirect("/login");
+    return res.redirect("/auth/login");
   });
 };

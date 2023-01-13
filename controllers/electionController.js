@@ -51,7 +51,7 @@ exports.getSingleElection = async (req, res) => {
     });
   } catch (error) {
     req.flash("error", error.message);
-    res.redirect("/admin");
+    res.redirect("/elections");
   }
 };
 

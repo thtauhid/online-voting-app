@@ -84,7 +84,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/", authRouter);
-app.use("/", electionRouter);
+app.use("/auth", authRouter);
+app.use("/elections", electionRouter);
 
 module.exports = app;

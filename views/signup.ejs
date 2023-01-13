@@ -16,7 +16,7 @@
       <div class="row">
         <div class="col-md-6 offset-md-3">
           <h1 class="text-center"><%= title %></h1>
-          <form action="/user" method="POST">
+          <form action="/auth/user" method="POST">
             <% if (messages.error) { %>
             <div class="alert alert-danger"><%= messages.error %></div>
             <% } %>
@@ -48,6 +48,9 @@
               <button type="submit" class="btn btn-primary">Sign Up</button>
             </div>
           </form>
+          <p class="mt-3">
+            Already have an account? <a href="/auth/login">Login</a>
+          </p>
         </div>
       </div>
     </div>
