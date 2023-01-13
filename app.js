@@ -84,6 +84,11 @@ app.get("/", (req, res) => {
   });
 });
 
+// Handling misredirection to /login page
+app.get("/login", (req, res) => {
+  res.redirect("/auth/login");
+});
+
 app.use("/auth", authRouter);
 app.use("/elections", electionRouter);
 
