@@ -15,12 +15,28 @@ module.exports = (sequelize, DataTypes) => {
       return await this.create({ title, description, electionId });
     }
 
+    static async getQuestionById(questionId) {
+      return await this.findByPk(questionId);
+    }
+
     static async getQuestionsByElectionId(electionId) {
       return await this.findAll({
         where: {
           electionId,
         },
       });
+    }
+
+    static async updateQuestion(userId, questionId, title, description) {
+      // Check if user is the owner of the question
+      return await this.update(
+        { title, description },
+        {
+          where: {
+            id: questionId,
+          },
+        }
+      );
     }
   }
   Question.init(

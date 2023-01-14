@@ -53,6 +53,20 @@ router.get(
   electionController.getSingleQuestion
 );
 
+// Edit Question Page
+router.get(
+  "/:electionId/questions/:questionId/edit",
+  // connectEnsureLogin.ensureLoggedIn(),
+  electionController.editQuestionPage
+);
+
+// Edit Question
+router.post(
+  "/:electionId/questions/:questionId",
+  // connectEnsureLogin.ensureLoggedIn(),
+  electionController.editQuestion
+);
+
 // Create Option Page
 router.get(
   "/:electionId/questions/:questionId/options/new",

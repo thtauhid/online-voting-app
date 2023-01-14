@@ -103,6 +103,34 @@ exports.getSingleQuestion = async (req, res) => {
   });
 };
 
+// Edit Question Page
+exports.editQuestionPage = async (req, res) => {
+  const { questionId } = req.params;
+  const { electionId } = req.params;
+  const question = await Question.getQuestionById(questionId);
+  res.render("questions/edit", {
+    title: "Edit Question: " + question.title,
+    question,
+    electionId,
+    csrfToken: req.csrfToken(),
+  });
+};
+
+// Edit Question
+exports.editQuestion = async (req, res) => {
+  const { title, description } = req.body;
+  const { questionId, electionId } = req.params;
+  const { id: userId } = req.user;
+
+  try {
+    await Question.updateQuestion(userId, questionId, title, description);
+    res.redirect(`/elections/${electionId}`);
+  } catch (error) {
+    req.flash("error", error.message);
+    res.redirect(`/elections/${electionId}/questions/${questionId}/edit`);
+  }
+};
+
 // Create Option Page
 exports.createOptionPage = async (req, res) => {
   res.render("options/new", {
