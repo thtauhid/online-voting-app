@@ -160,3 +160,35 @@ exports.createOption = async (req, res) => {
     );
   }
 };
+
+// Edit Option Page
+exports.editOptionPage = async (req, res) => {
+  const { optionId } = req.params;
+  const { electionId } = req.params;
+  const { questionId } = req.params;
+  const option = await Option.getOptionById(optionId);
+  res.render("options/edit", {
+    title: "Edit Option: " + option.title,
+    option,
+    electionId,
+    questionId,
+    csrfToken: req.csrfToken(),
+  });
+};
+
+// Edit Option
+exports.editOption = async (req, res) => {
+  const { title } = req.body;
+  const { electionId, questionId, optionId } = req.params;
+  const { id: userId } = req.user;
+
+  try {
+    await Option.updateOption(userId, optionId, title);
+    res.redirect(`/elections/${electionId}/questions/${questionId}`);
+  } catch (error) {
+    req.flash("error", error.message);
+    res.redirect(
+      `/elections/${electionId}/questions/${questionId}/options/${optionId}/edit`
+    );
+  }
+};

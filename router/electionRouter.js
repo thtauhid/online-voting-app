@@ -81,4 +81,18 @@ router.post(
   electionController.createOption
 );
 
+// Edit Option Page
+router.get(
+  "/:electionId/questions/:questionId/options/:optionId/edit",
+  connectEnsureLogin.ensureLoggedIn(),
+  electionController.editOptionPage
+);
+
+// Edit Option
+router.post(
+  "/:electionId/questions/:questionId/options/:optionId",
+  connectEnsureLogin.ensureLoggedIn(),
+  electionController.editOption
+);
+
 module.exports = router;

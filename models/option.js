@@ -14,6 +14,14 @@ module.exports = (sequelize, DataTypes) => {
     static async createOption(title, questionId) {
       return this.create({ title, questionId });
     }
+
+    static async getOptionById(optionId) {
+      return await this.findByPk(optionId);
+    }
+
+    static async updateOption(userId, optionId, title) {
+      return await this.update({ title }, { where: { id: optionId } });
+    }
   }
   Option.init(
     {

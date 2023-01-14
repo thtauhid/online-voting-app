@@ -34,7 +34,15 @@
 
           <ul class="list-group">
             <% for (let option of options) { %>
-            <li class="list-group-item"><%= option.title %></li>
+            <li class="list-group-item">
+              <span class="d-flex justify-content-between">
+                <span id="option-<%= option.id %>"><%= option.title %></span>
+                <a
+                  href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/<%= option.id %>/edit"
+                  >Edit</a
+                >
+              </span>
+            </li>
             <% } %>
           </ul>
         </div>

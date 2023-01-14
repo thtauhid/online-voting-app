@@ -95,7 +95,7 @@ describe("Election", () => {
     // Checking if the option is added to the question
     response = await agent.get("/elections/1/questions/1");
     const $ = cherio.load(response.text);
-    const firstListItem = $("ul > li")[0].children[0].data;
+    const firstListItem = $("#option-1")[0].children[0].data;
 
     expect(firstListItem).toContain("Test Option");
   });
