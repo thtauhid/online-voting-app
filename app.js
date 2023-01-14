@@ -9,6 +9,7 @@ const localStrategy = require("passport-local");
 const session = require("express-session");
 const flash = require("connect-flash");
 const bcrypt = require("bcrypt");
+const connectEnsureLogin = require("connect-ensure-login");
 
 const authRouter = require("./router/authRouter");
 const electionRouter = require("./router/electionRouter");
@@ -90,6 +91,6 @@ app.get("/login", (req, res) => {
 });
 
 app.use("/auth", authRouter);
-app.use("/elections", electionRouter);
+app.use("/elections", connectEnsureLogin.ensureLoggedIn(), electionRouter);
 
 module.exports = app;
