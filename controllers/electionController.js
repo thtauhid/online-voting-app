@@ -49,6 +49,7 @@ exports.getSingleElection = async (req, res) => {
       title: election.title,
       election,
       questions,
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     req.flash("error", error.message);
@@ -89,7 +90,7 @@ exports.createQuestion = async (req, res) => {
 
 // Get Single Question
 exports.getSingleQuestion = async (req, res) => {
-  const { questionId } = req.params;
+  const { questionId, electionId } = req.params;
   const question = await Question.findByPk(questionId);
   const options = await Option.findAll({
     where: {
@@ -100,6 +101,9 @@ exports.getSingleQuestion = async (req, res) => {
     title: question.title,
     question,
     options,
+    questionId,
+    electionId,
+    csrfToken: req.csrfToken(),
   });
 };
 
@@ -128,6 +132,25 @@ exports.editQuestion = async (req, res) => {
   } catch (error) {
     req.flash("error", error.message);
     res.redirect(`/elections/${electionId}/questions/${questionId}/edit`);
+  }
+};
+
+// Delete Question
+exports.deleteQuestion = async (req, res) => {
+  const { questionId } = req.params;
+  const { id: userId } = req.user;
+  console.log({ userId, questionId });
+
+  try {
+    // First delete all options associated with the question
+    // If all associated options are not deleted, then the question cannot be deleted
+    await await Option.deleteAllOptionsByQuestionId(questionId);
+
+    // Then delete the question
+    await Question.deleteQuestion(userId, questionId);
+    return res.json({ success: true });
+  } catch (error) {
+    return res.json({ success: false, error: error.message });
   }
 };
 
@@ -190,5 +213,19 @@ exports.editOption = async (req, res) => {
     res.redirect(
       `/elections/${electionId}/questions/${questionId}/options/${optionId}/edit`
     );
+  }
+};
+
+// Delete Option
+exports.deleteOption = async (req, res) => {
+  const { optionId } = req.params;
+  const { id: userId } = req.user;
+
+  try {
+    await Option.deleteOption(userId, optionId);
+    return res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false });
   }
 };

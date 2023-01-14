@@ -22,6 +22,14 @@ module.exports = (sequelize, DataTypes) => {
     static async updateOption(userId, optionId, title) {
       return await this.update({ title }, { where: { id: optionId } });
     }
+
+    static async deleteOption(userId, optionId) {
+      return await this.destroy({ where: { id: optionId } });
+    }
+
+    static async deleteAllOptionsByQuestionId(questionId) {
+      return await this.destroy({ where: { questionId } });
+    }
   }
   Option.init(
     {

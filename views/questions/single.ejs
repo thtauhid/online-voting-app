@@ -4,10 +4,46 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <meta name="question-id" content="<%= questionId %>" />
+    <meta name="election-id" content="<%= electionId %>" />
     <link
       rel="stylesheet"
       href="https://bootswatch.com/5/zephyr/bootstrap.min.css"
     />
+    <script>
+      let token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+      let questionId = document
+        .querySelector('meta[name="question-id"]')
+        .getAttribute("content");
+      let electionId = document
+        .querySelector('meta[name="election-id"]')
+        .getAttribute("content");
+
+      function deleteOption(id) {
+        fetch(
+          `/elections/${electionId}/questions/${questionId}/options/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              _csrf: token,
+            }),
+          }
+        )
+          .then((res) => {
+            console.log(res);
+            if (res.ok) window.location.reload();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    </script>
     <title><%= title %></title>
   </head>
   <body>
@@ -34,12 +70,19 @@
 
           <ul class="list-group">
             <% for (let option of options) { %>
-            <li class="list-group-item">
-              <span class="d-flex justify-content-between">
-                <span id="option-<%= option.id %>"><%= option.title %></span>
+            <li class="list-group-item d-flex justify-content-between">
+              <span id="option-<%= option.id %>"><%= option.title %></span>
+              <span>
                 <a
                   href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/<%= option.id %>/edit"
+                  class="btn btn-sm btn-outline-info"
                   >Edit</a
+                >
+                <a
+                  href="#"
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="deleteOption(<%= option.id %>)"
+                  >Delete</a
                 >
               </span>
             </li>

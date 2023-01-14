@@ -1,5 +1,8 @@
 "use strict";
 const { Model } = require("sequelize");
+// const Option = require("./option");
+const { Option } = require("../models");
+
 module.exports = (sequelize, DataTypes) => {
   class Question extends Model {
     /**
@@ -28,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static async updateQuestion(userId, questionId, title, description) {
-      // Check if user is the owner of the question
       return await this.update(
         { title, description },
         {
@@ -37,6 +39,13 @@ module.exports = (sequelize, DataTypes) => {
           },
         }
       );
+    }
+
+    // In order to delete a question, we need to delete all the options associated with it.
+    // Use deleteAllOptionsByQuestionId() to delete all associated options.
+    // It can be found in models/option.js file.
+    static async deleteQuestion(userId, questionId) {
+      return await this.destroy({ where: { id: questionId } });
     }
   }
   Question.init(

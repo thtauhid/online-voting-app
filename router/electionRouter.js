@@ -56,15 +56,22 @@ router.get(
 // Edit Question Page
 router.get(
   "/:electionId/questions/:questionId/edit",
-  // connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn(),
   electionController.editQuestionPage
 );
 
 // Edit Question
 router.post(
   "/:electionId/questions/:questionId",
-  // connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn(),
   electionController.editQuestion
+);
+
+// Delete Question
+router.delete(
+  "/:electionId/questions/:questionId",
+  connectEnsureLogin.ensureLoggedIn(),
+  electionController.deleteQuestion
 );
 
 // Create Option Page
@@ -93,6 +100,13 @@ router.post(
   "/:electionId/questions/:questionId/options/:optionId",
   connectEnsureLogin.ensureLoggedIn(),
   electionController.editOption
+);
+
+// Delete Option
+router.delete(
+  "/:electionId/questions/:questionId/options/:optionId",
+  connectEnsureLogin.ensureLoggedIn(),
+  electionController.deleteOption
 );
 
 module.exports = router;

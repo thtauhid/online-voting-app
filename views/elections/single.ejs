@@ -8,6 +8,36 @@
       rel="stylesheet"
       href="https://bootswatch.com/5/zephyr/bootstrap.min.css"
     />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <meta name="election-id" content="<%= election.id %>" />
+    <script>
+      // Need to work on this
+      let token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+      let electionId = document
+        .querySelector('meta[name="election-id"]')
+        .getAttribute("content");
+
+      function deleteQuestion(id) {
+        fetch(`/elections/${electionId}/questions/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            _csrf: token,
+          }),
+        })
+          .then((res) => {
+            console.log(res);
+            if (res.ok) window.location.reload();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    </script>
     <title><%= title %></title>
   </head>
   <body>
@@ -34,13 +64,23 @@
 
           <ul class="list-group">
             <% for (let question of questions) { %>
-            <li class="list-group-item">
-              <span class="d-flex justify-content-between">
-                <a href="<%=election.id %>/questions/<%= question.id %>"
-                  ><%= question.title %></a
-                >
-                <a href="<%=election.id %>/questions/<%= question.id %>/edit"
+            <li class="list-group-item d-flex justify-content-between">
+              <a
+                href="/elections/<%=election.id %>/questions/<%= question.id %>"
+                id="question-<%= question.id %>"
+                ><%= question.title %></a
+              >
+              <span>
+                <a
+                  href="<%=election.id %>/questions/<%= question.id %>/edit"
+                  class="btn btn-sm btn-outline-info"
                   >Edit</a
+                >
+                <a
+                  href="#"
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="deleteQuestion(<%= question.id %>)"
+                  >Delete</a
                 >
               </span>
             </li>
