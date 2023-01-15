@@ -3,6 +3,9 @@
     <h2>Controls</h2>
   </div>
   <hr />
+  <!-- If election is just created and never launched. -->
+  <% if (election.status === 'created') { %>
+
   <ul class="list-group">
     <li class="list-group-item">
       <form action="/elections/<%= election.id %>/url" method="post">
@@ -12,7 +15,7 @@
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-text"
-                >https://voing-app.onrender.com/</span
+                >https://voing-app.onrender.com/e/</span
               >
               <input
                 type="text"
@@ -44,4 +47,31 @@
       <a href="#" class="btn btn-success">Launch Election</a>
     </li>
   </ul>
+
+  <!-- If election is launched -->
+  <% } else if(election.status === 'lanuched') { %>
+  <div class="alert alert-info">
+    <p>
+      Your election is now live. Voters can now access your election using the
+      URL below.
+    </p>
+    <p>
+      <a href="https://voing-app.onrender.com/e/<%= election.url %>"
+        >https://voing-app.onrender.com/e/<%= election.url %></a
+      >
+    </p>
+  </div>
+
+  <button class="btn btn-danger">End Election</button>
+
+  <!-- If election has ended -->
+  <% } else if(election.status === 'completed') { %>
+  <div class="alert alert-info">
+    <p>Your election has ended. You can now view the results.</p>
+  </div>
+  <% } else { %>
+  <div class="alert alert-warning">
+    <p>Something went wrong</p>
+  </div>
+  <% } %>
 </section>
