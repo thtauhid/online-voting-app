@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://bootswatch.com/5/zephyr/bootstrap.min.css"
+    />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <%- include('../partials/nav'); %>
+          <h1 class="text-center"><%= title %></h1>
+          <form action="/elections/<%= electionId%>/voters" method="POST">
+            <% if (messages.error) { %>
+            <div class="alert alert-danger"><%= messages.error %></div>
+            <% } %>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <div class="form-group mt-3">
+              <label for="voterId">Voter ID</label>
+              <input
+                type="text"
+                name="voterId"
+                id="voterId"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group mt-3">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+              />
+            </div>
+            <div class="form-group mt-3">
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

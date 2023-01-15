@@ -75,4 +75,10 @@ router.delete(
   electionController.deleteOption
 );
 
+// Add Voter Page
+router.get("/:electionId/voters/new", electionController.addVoterPage);
+
+// Add Voter
+router.post("/:electionId/voters", electionController.addVoter);
+
 module.exports = router;

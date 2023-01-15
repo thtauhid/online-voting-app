@@ -1,4 +1,4 @@
-const { Election, Question, Option } = require("../models");
+const { Election, Question, Option, Voter } = require("../models");
 
 // Create Election Page
 exports.createElectionPage = async (req, res) => {
@@ -42,13 +42,16 @@ exports.getElections = async (req, res) => {
 // Get Single Election
 exports.getSingleElection = async (req, res) => {
   try {
-    const election = await Election.getElectionById(req.params.id);
-    const questions = await Question.getQuestionsByElectionId(req.params.id);
+    const { id: electionId } = req.params;
+    const election = await Election.getElectionById(electionId);
+    const questions = await Question.getQuestionsByElectionId(electionId);
+    const voters = await Voter.getVotersByElectionId(electionId);
 
     res.render("elections/single", {
       title: election.title,
       election,
       questions,
+      voters,
       csrfToken: req.csrfToken(),
     });
   } catch (error) {
@@ -227,5 +230,29 @@ exports.deleteOption = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.json({ success: false });
+  }
+};
+
+// Add Voter Page
+exports.addVoterPage = async (req, res) => {
+  res.render("voters/new", {
+    title: "Add New Voter",
+    csrfToken: req.csrfToken(),
+    electionId: req.params.electionId,
+  });
+};
+
+// Add Voter
+exports.addVoter = async (req, res) => {
+  const { electionId } = req.params;
+  const { voterId, password } = req.body;
+
+  try {
+    await Voter.addVoter(voterId, password, electionId);
+    req.flash("success", "Voter added successfully.");
+    res.redirect(`/elections/${electionId}/voters/new`);
+  } catch (error) {
+    req.flash("error", error.message);
+    res.redirect(`/elections/${electionId}/voters/new`);
   }
 };
