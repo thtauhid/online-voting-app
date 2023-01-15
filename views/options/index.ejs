@@ -1,0 +1,64 @@
+<section class="mt-5">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Options</h2>
+    <a
+      href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/new"
+      class="btn btn-outline-primary"
+      >Create Option</a
+    >
+  </div>
+  <hr />
+  <p>You have <%= options.length %> options</p>
+
+  <ul class="list-group">
+    <% for (let option of options) { %>
+    <li class="list-group-item d-flex justify-content-between">
+      <span id="option-<%= option.id %>"><%= option.title %></span>
+      <span>
+        <a
+          href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/<%= option.id %>/edit"
+          class="btn btn-sm btn-outline-info"
+          >Edit</a
+        >
+        <a
+          href="#"
+          class="btn btn-sm btn-outline-danger"
+          onclick="deleteOption(<%= option.id %>)"
+          >Delete</a
+        >
+      </span>
+    </li>
+    <% } %>
+  </ul>
+</section>
+
+<script>
+  let token = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+  let questionId = document
+    .querySelector('meta[name="question-id"]')
+    .getAttribute("content");
+  let electionId = document
+    .querySelector('meta[name="election-id"]')
+    .getAttribute("content");
+
+  function deleteOption(id) {
+    fetch(`/elections/${electionId}/questions/${questionId}/options/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        _csrf: token,
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.ok) window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+</script>

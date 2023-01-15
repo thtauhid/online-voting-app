@@ -1,0 +1,64 @@
+<section class="mt-5">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Questions</h2>
+    <a
+      href="/elections/<%= election.id %>/questions/new"
+      class="btn btn-outline-primary"
+      >Add Question</a
+    >
+  </div>
+  <hr />
+  <p>You have <%= questions.length %> questions</p>
+
+  <ul class="list-group">
+    <% for (let question of questions) { %>
+    <li class="list-group-item d-flex justify-content-between">
+      <a
+        href="/elections/<%=election.id %>/questions/<%= question.id %>"
+        id="question-<%= question.id %>"
+        ><%= question.title %></a
+      >
+      <span>
+        <a
+          href="<%=election.id %>/questions/<%= question.id %>/edit"
+          class="btn btn-sm btn-outline-info"
+          >Edit</a
+        >
+        <a
+          href="#"
+          class="btn btn-sm btn-outline-danger"
+          onclick="deleteQuestion(<%= question.id %>)"
+          >Delete</a
+        >
+      </span>
+    </li>
+    <% } %>
+  </ul>
+</section>
+<script>
+  let token = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+  let electionId = document
+    .querySelector('meta[name="election-id"]')
+    .getAttribute("content");
+
+  function deleteQuestion(id) {
+    fetch(`/elections/${electionId}/questions/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        _csrf: token,
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.ok) window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+</script>
