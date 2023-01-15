@@ -1,0 +1,47 @@
+<section class="mt-5">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Controls</h2>
+  </div>
+  <hr />
+  <ul class="list-group">
+    <li class="list-group-item">
+      <form action="/elections/<%= election.id %>/url" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="form-group">
+          <label class="form-label">Election URL</label>
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-text"
+                >https://voing-app.onrender.com/</span
+              >
+              <input
+                type="text"
+                name="electionUrl"
+                class="form-control"
+                value="<%= election.url %>"
+              />
+            </div>
+            <small class="form-text text-muted">
+              This is the URL that voters will use to access your election after
+              launch.
+            </small>
+            <div class="form-group mt-3">
+              <button type="submit" class="btn btn-primary" name="updateUrl">
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </li>
+    <li class="list-group-item">
+      <a href="#" class="btn btn-info">Stats</a>
+    </li>
+    <li class="list-group-item">
+      <a href="#" class="btn btn-info">Preview Ballot</a>
+    </li>
+    <li class="list-group-item">
+      <a href="#" class="btn btn-success">Launch Election</a>
+    </li>
+  </ul>
+</section>

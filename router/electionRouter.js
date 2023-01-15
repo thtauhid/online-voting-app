@@ -15,6 +15,9 @@ router.get("/", electionController.getElections);
 // Get Single Election
 router.get("/:id", electionController.getSingleElection);
 
+// Change Election URL
+router.post("/:electionId/url", electionController.changeElectionUrl);
+
 // Create Question Page
 router.get("/:electionId/questions/new", electionController.createQuestionPage);
 

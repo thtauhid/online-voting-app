@@ -14,12 +14,17 @@
   </head>
   <body>
     <%- include('../partials/header'); %>
-    <div class="container mt-5">
+    <div class="container my-5">
       <div class="row">
         <div class="col-md-6 offset-md-3">
           <%- include('../partials/nav'); %>
           <h1 class=""><%= title %></h1>
-          <%- include('../questions/index') %> <%- include('../voters/index') %>
+          <!-- Load Questions Section -->
+          <%- include('../questions/index'); %>
+          <!-- Load Voters Section -->
+          <%- include('../voters/index');%>
+          <!-- Load Election Controls -->
+          <%-include('controls'); %>
         </div>
       </div>
     </div>

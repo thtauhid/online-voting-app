@@ -1,4 +1,5 @@
 const { Election, Question, Option, Voter } = require("../models");
+const utils = require("../utils");
 
 // Create Election Page
 exports.createElectionPage = async (req, res) => {
@@ -11,14 +12,15 @@ exports.createElectionPage = async (req, res) => {
 // Create Election
 exports.createElection = async (req, res) => {
   try {
-    const election = await Election.createElection(req.body.title, req.user.id);
+    const election = await Election.createElection(
+      req.body.title,
+      req.user.id,
+      utils.randomElectionUrl()
+    );
 
     res.redirect(`/elections/${election.id}`);
   } catch (error) {
-    req.flash(
-      "error",
-      "Unable to create new election. Minimum 5 character required."
-    );
+    req.flash("error", error.message);
     res.redirect("/elections/new");
   }
 };
@@ -57,6 +59,22 @@ exports.getSingleElection = async (req, res) => {
   } catch (error) {
     req.flash("error", error.message);
     res.redirect("/elections");
+  }
+};
+
+// Change Election URL
+exports.changeElectionUrl = async (req, res) => {
+  const { electionId } = req.params;
+
+  try {
+    const { electionUrl: url } = req.body;
+
+    await Election.changeElectionUrl(electionId, url);
+    return res.redirect(`/elections/${electionId}`);
+  } catch (error) {
+    console.log(error);
+    req.flash("error", error.message);
+    return res.redirect(`/elections/${electionId}`);
   }
 };
 

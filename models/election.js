@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
 
-    static async createElection(title, adminId) {
-      return await this.create({ title, adminId });
+    static async createElection(title, adminId, url) {
+      return await this.create({ title, adminId, url });
     }
 
     static async getSingleElection() {
@@ -29,6 +29,15 @@ module.exports = (sequelize, DataTypes) => {
 
     static async getElectionById(id) {
       return await this.findByPk(id);
+    }
+
+    static async changeElectionUrl(electionId, url) {
+      const election = await this.getElectionById(electionId);
+
+      if (!election) throw new Error("Election not found");
+
+      election.url = url;
+      return await election.save();
     }
   }
   Election.init(
@@ -47,6 +56,19 @@ module.exports = (sequelize, DataTypes) => {
           model: "Users",
           key: "id",
         },
+      },
+      url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [5],
+        },
+        unique: true,
+      },
+      status: {
+        type: DataTypes.ENUM("created", "lanuched", "completed"),
+        defaultValue: "created",
       },
     },
     {
