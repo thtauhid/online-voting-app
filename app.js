@@ -135,8 +135,21 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/auth", authRouter);
+
+app.use(
+  "/elections",
+  connectEnsureLogin.ensureLoggedIn("/auth/login"),
+  checkAdmin,
+  electionRouter
+);
+
 // Root route (used to redirect users to their respective election pages)
-app.get("/e", voteController.root);
+app.get(
+  "/e",
+  connectEnsureLogin.ensureLoggedIn("/e/login"),
+  voteController.root
+);
 
 // Voter Login
 app.get("/e/login", voteController.loginPage);
@@ -145,7 +158,7 @@ app.get("/e/login", voteController.loginPage);
 app.post(
   "/e/session",
   passport.authenticate("voter", {
-    successRedirect: "/e/",
+    successRedirect: "/e",
     failureRedirect: "/e/login",
     failureFlash: true,
   })
@@ -157,15 +170,6 @@ app.get(
   connectEnsureLogin.ensureLoggedIn("/e/login"),
   checkVoter,
   voteController.votePage
-);
-
-app.use("/auth", authRouter);
-
-app.use(
-  "/elections",
-  connectEnsureLogin.ensureLoggedIn("/auth/login"),
-  checkAdmin,
-  electionRouter
 );
 
 module.exports = app;

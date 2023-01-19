@@ -30,6 +30,25 @@ module.exports = (sequelize, DataTypes) => {
         electionId,
       });
     }
+
+    static async getVoterById(voterId) {
+      return await Voter.findOne({
+        where: {
+          voterId,
+        },
+      });
+    }
+
+    static async verifyVoterAndElection(voterId, electionId) {
+      const find = await Voter.findOne({
+        where: {
+          voterId,
+          electionId,
+        },
+      });
+      if (!find) throw new Error("Voter not found");
+      return { verified: true };
+    }
   }
   Voter.init(
     {

@@ -1,5 +1,21 @@
+const { Election, Voter } = require("../models/index");
+
 exports.root = async (req, res) => {
-  res.redirect("/e/1");
+  // If user is logged in, redirect to their respective election page
+
+  const { user } = req;
+  console.log({ user });
+  try {
+    if (user) {
+      Election.getElectionById(user.electionId).then((election) => {
+        return res.redirect(`/e/${election.url}`);
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    req.flash("error", error.message);
+    res.redirect("/404");
+  }
 };
 
 exports.loginPage = async (req, res) => {
@@ -10,8 +26,15 @@ exports.loginPage = async (req, res) => {
 };
 
 exports.votePage = async (req, res) => {
-  res.render("vote.ejs", {
-    title: "Voting page",
-    csrfToken: req.csrfToken(),
-  });
+  try {
+    await Voter.verifyVoterAndElection(req.user.voterId, req.user.electionId);
+    res.render("vote", {
+      title: "Voting page",
+      csrfToken: req.csrfToken(),
+    });
+  } catch (error) {
+    console.log(error);
+    req.flash("error", error.message);
+    res.redirect("/404");
+  }
 };
