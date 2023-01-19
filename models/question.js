@@ -9,7 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // Question belongs to election
+      Question.belongsTo(models.Election, {
+        foreignKey: "electionId",
+      });
+
+      // Question has many options
+      Question.hasMany(models.Option, {
+        foreignKey: "questionId",
+        as: "options",
+      });
     }
 
     static async createQuestion(title, description, electionId) {

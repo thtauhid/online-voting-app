@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // Voter belongs to election
+      Voter.belongsTo(models.Election, {
+        foreignKey: "electionId",
+      });
     }
 
     static async getVotersByElectionId(electionId) {

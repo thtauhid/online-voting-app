@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasMany(models.Election, {
+        foreignKey: "adminId",
+      });
     }
 
     static async createUser(name, email, password) {

@@ -8,7 +8,22 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // belongs to user
+      Election.belongsTo(models.User, {
+        foreignKey: "adminId",
+      });
+
+      // Elction has many question
+      Election.hasMany(models.Question, {
+        foreignKey: "electionId",
+        as: "questions",
+      });
+
+      // Election has many voters
+      Election.hasMany(models.Voter, {
+        foreignKey: "electionId",
+        as: "voters",
+      });
     }
 
     static async createElection(title, adminId, url) {
