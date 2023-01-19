@@ -13,10 +13,23 @@ router.post("/user", authController.signUp);
 // Login Page
 router.get("/login", authController.loginPage);
 
+// Voter Login
+// router.get("/voter/login", authController.voterLogin);
+
+// Voter Login (Authenticate user & create session)
+// router.post(
+//   "/voter/session",
+//   passport.authenticate("voter", {
+//     successRedirect: "/e/abc",
+//     failureRedirect: "/auth/voter",
+//     failureFlash: true,
+//   })
+// );
+
 // Login (Authenticate user & create session)
 router.post(
   "/session",
-  passport.authenticate("local", {
+  passport.authenticate("admin", {
     successRedirect: "/elections",
     failureRedirect: "/auth/login",
     failureFlash: true,

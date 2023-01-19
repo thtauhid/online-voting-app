@@ -32,6 +32,14 @@ exports.loginPage = async (req, res) => {
   });
 };
 
+// Voter Login
+// exports.voterLogin = async (req, res) => {
+//   res.render("voterLogin", {
+//     title: "Voter Login",
+//     csrfToken: req.csrfToken(),
+//   });
+// };
+
 // Logout (Destroy session)
 exports.logout = async (req, res, next) => {
   req.logout((err) => {

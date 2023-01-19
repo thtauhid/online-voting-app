@@ -13,7 +13,11 @@ const connectEnsureLogin = require("connect-ensure-login");
 
 const authRouter = require("./router/authRouter");
 const electionRouter = require("./router/electionRouter");
-const { User } = require("./models");
+// const voteRouter = require("./router/voteRouter");
+
+const { User, Voter } = require("./models");
+const { checkAdmin, checkVoter } = require("./middlewares");
+const voteController = require("./controllers/voteController");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -35,7 +39,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+// passport strategy for admin
 passport.use(
+  "admin",
   new localStrategy(
     { usernameField: "email", passwordField: "password" },
     async (username, password, done) => {
@@ -59,19 +65,63 @@ passport.use(
   )
 );
 
+// passport strategy for voter
+passport.use(
+  "voter",
+  new localStrategy(
+    {
+      usernameField: "voterId",
+      passwordField: "password",
+      passReqToCallback: true,
+    },
+    async (req, username, password, done) => {
+      await Voter.findOne({
+        where: {
+          // need to check if voterId matches with electionId
+          voterId: username,
+        },
+      })
+        .then(async (user) => {
+          if (user) {
+            const result = await bcrypt.compare(password, user.password);
+            if (result) return done(null, user);
+          }
+          return done(null, false, { message: "Invalid Credentials" });
+        })
+        .catch((err) => {
+          console.log({ err });
+          return err;
+        });
+    }
+  )
+);
+
 passport.serializeUser((user, done) => {
-  console.log("Serializing user: ", user.id);
-  done(null, user.id);
+  console.log("Serializing user: ", user);
+  done(null, user);
 });
 
-passport.deserializeUser(async (id, done) => {
-  await User.findByPk(id)
-    .then((user) => {
-      done(null, user);
-    })
-    .catch((err) => {
-      done(err, null);
-    });
+passport.deserializeUser(async (user, done) => {
+  // eslint-disable-next-line no-prototype-builtins
+  if (user.hasOwnProperty("voterId")) {
+    // User is voter. Deserialize voter
+    await Voter.findByPk(user.id)
+      .then((user) => {
+        done(null, user);
+      })
+      .catch((err) => {
+        done(err, null);
+      });
+  } else {
+    // User is admin. Deserialize admin
+    await User.findByPk(user.id)
+      .then((user) => {
+        done(null, user);
+      })
+      .catch((err) => {
+        done(err, null);
+      });
+  }
 });
 
 app.use((req, res, next) => {
@@ -85,12 +135,37 @@ app.get("/", (req, res) => {
   });
 });
 
-// Handling misredirection to /login page
-app.get("/login", (req, res) => {
-  res.redirect("/auth/login");
-});
+// Root route (used to redirect users to their respective election pages)
+app.get("/e", voteController.root);
+
+// Voter Login
+app.get("/e/login", voteController.loginPage);
+
+// Voter Login (Create new voter & create session)
+app.post(
+  "/e/session",
+  passport.authenticate("voter", {
+    successRedirect: "/e/",
+    failureRedirect: "/e/login",
+    failureFlash: true,
+  })
+);
+
+// Voting Page
+app.get(
+  "/e/:electionId",
+  connectEnsureLogin.ensureLoggedIn("/e/login"),
+  checkVoter,
+  voteController.votePage
+);
 
 app.use("/auth", authRouter);
-app.use("/elections", connectEnsureLogin.ensureLoggedIn(), electionRouter);
+
+app.use(
+  "/elections",
+  connectEnsureLogin.ensureLoggedIn("/auth/login"),
+  checkAdmin,
+  electionRouter
+);
 
 module.exports = app;
