@@ -28,8 +28,12 @@ exports.loginPage = async (req, res) => {
 exports.votePage = async (req, res) => {
   try {
     await Voter.verifyVoterAndElection(req.user.voterId, req.user.electionId);
+    const election = await Election.getFullElectionById(req.user.electionId);
+    console.log({ election });
+
     res.render("vote", {
-      title: "Voting page",
+      title: election.title,
+      election,
       csrfToken: req.csrfToken(),
     });
   } catch (error) {

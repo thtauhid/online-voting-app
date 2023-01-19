@@ -17,12 +17,41 @@
       <div class="row">
         <div class="col-md-6 offset-md-3">
           <h1 class="text-center"><%= title %></h1>
-          <form action="/auth/session" method="POST">
-            <% if (messages.error) { %>
-            <div class="alert alert-danger"><%= messages.error %></div>
-            <% } %>
+
+          <% if (messages.error) { %>
+          <div class="alert alert-danger"><%= messages.error %></div>
+          <% } %>
+          <form action="/e/<%= election.url %>" method="POST" class="mt-5">
+            <!-- Questions -->
+            <ul class="list-group">
+              <% for(let question of election.questions) { %>
+              <li class="list-group-item">
+                <fieldset class="form-group">
+                  <legend><%= question.title %></legend>
+
+                  <!-- Options -->
+                  <% for(let option of question.options) { %>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="<%= question.id %>"
+                      id="<%= option.title %>"
+                      value="<%= option.id %>"
+                      required
+                    />
+                    <label class="form-check-label" for="<%= option.title %>">
+                      <%= option.title %>
+                    </label>
+                  </div>
+                  <% } %>
+                </fieldset>
+              </li>
+              <% } %>
+            </ul>
 
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
           </form>
         </div>
       </div>

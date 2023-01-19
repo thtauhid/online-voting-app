@@ -54,6 +54,23 @@ module.exports = (sequelize, DataTypes) => {
       election.url = url;
       return await election.save();
     }
+
+    static async getFullElectionById(id) {
+      return await this.findByPk(id, {
+        include: [
+          {
+            model: sequelize.models.Question,
+            as: "questions",
+            include: [
+              {
+                model: sequelize.models.Option,
+                as: "options",
+              },
+            ],
+          },
+        ],
+      });
+    }
   }
   Election.init(
     {
