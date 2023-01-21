@@ -94,13 +94,15 @@ exports.previewElection = async (req, res) => {
 exports.launchElection = async (req, res) => {
   try {
     const { electionId } = req.params;
+    // TODO: Check if user is owner of election
+
     await Election.launchElection(electionId);
 
-    res.json({
+    return res.json({
       success: true,
     });
   } catch (error) {
-    res.json({
+    return res.json({
       success: false,
     });
   }

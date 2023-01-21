@@ -87,12 +87,14 @@
             _csrf: "<%= csrfToken %>",
           }),
         });
-      });
 
-      // If response is success, send to election page
-      if (response.status === 200) {
-        window.location.href = `/elections/<%= election.id %>`;
-      }
+        // If response is success, send to election page
+        if (response.status === 200) {
+          // TODO: Send  success flash messages
+          window.location.href = `/elections/<%= election.id %>`;
+        }
+        // TODO: send error flash messages to same page
+      });
     </script>
   </body>
 </html>
