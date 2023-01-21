@@ -71,6 +71,14 @@ module.exports = (sequelize, DataTypes) => {
         ],
       });
     }
+
+    static async launchElection(electionid) {
+      const election = await this.findByPk(electionid);
+      if (!election) throw new Error("Election not found");
+
+      election.status = "lanuched";
+      return await election.save();
+    }
   }
   Election.init(
     {

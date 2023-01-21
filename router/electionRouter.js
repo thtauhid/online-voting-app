@@ -18,6 +18,11 @@ router.get("/:id", electionController.getSingleElection);
 // Change Election URL
 router.post("/:electionId/url", electionController.changeElectionUrl);
 
+// Preview Election
+router.get("/:electionId/preview", electionController.previewElection);
+
+// Launch Election
+router.put("/:electionId/launch", electionController.launchElection);
 // Create Question Page
 router.get("/:electionId/questions/new", electionController.createQuestionPage);
 

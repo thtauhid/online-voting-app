@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://bootswatch.com/5/zephyr/bootstrap.min.css"
+    />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+
+    <title><%= title %></title>
+  </head>
+  <body>
+    <%- include('partials/header'); %>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-6 offset-md-3 border border-warning p-5">
+          <h2 class="text-center">Preview</h2>
+          <p class="text-center">
+            This page shows you how your voters will see the election page.
+          </p>
+        </div>
+        <div class="col-md-6 offset-md-3 border border-warning p-5">
+          <h1 class="text-center"><%= title %></h1>
+          <% if (messages.error) { %>
+          <div class="alert alert-danger"><%= messages.error %></div>
+          <% } %>
+          <form class="mt-5">
+            <!-- Questions -->
+            <ul class="list-group">
+              <% for(let question of election.questions) { %>
+              <li class="list-group-item">
+                <fieldset class="form-group">
+                  <legend><%= question.title %></legend>
+                  <p><%= question.description %></p>
+                  <!-- Options -->
+                  <% for(let option of question.options) { %>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="<%= question.id %>"
+                      id="<%= option.title %>"
+                      value="<%= option.id %>"
+                      required
+                    />
+                    <label class="form-check-label" for="<%= option.title %>">
+                      <%= option.title %>
+                    </label>
+                  </div>
+                  <% } %>
+                </fieldset>
+              </li>
+              <% } %>
+            </ul>
+            <button class="btn btn-primary mt-3">Submit</button>
+          </form>
+        </div>
+        <div class="col-md-6 offset-md-3 border border-warning p-5 mb-5">
+          <p>
+            Click on the Launch Election Button below to launch the election.
+            <br />
+            Edits are not allowed after election is launched.
+          </p>
+          <button class="btn btn-primary" id="launch-election">
+            Launch Election
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Select launch election button
+      const launchElectionButton = document.querySelector("#launch-election");
+      // Add event listener to launch election button
+      launchElectionButton.addEventListener("click", async (e) => {
+        // Prevent default behavior
+        e.preventDefault();
+        // Send request to launch election
+        const response = await fetch(`/elections/<%= election.id %>/launch`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            _csrf: "<%= csrfToken %>",
+          }),
+        });
+      });
+
+      // If response is success, send to election page
+      if (response.status === 200) {
+        window.location.href = `/elections/<%= election.id %>`;
+      }
+    </script>
+  </body>
+</html>

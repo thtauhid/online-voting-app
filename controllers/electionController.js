@@ -78,6 +78,34 @@ exports.changeElectionUrl = async (req, res) => {
   }
 };
 
+// Preview election
+exports.previewElection = async (req, res) => {
+  const { electionId } = req.params;
+  const election = await Election.getFullElectionById(electionId);
+
+  res.render("preview", {
+    title: election.title,
+    election,
+    csrfToken: req.csrfToken(),
+  });
+};
+
+// Launch Election
+exports.launchElection = async (req, res) => {
+  try {
+    const { electionId } = req.params;
+    await Election.launchElection(electionId);
+
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+    });
+  }
+};
+
 // Create Question Page
 exports.createQuestionPage = async (req, res) => {
   res.render("questions/new", {
