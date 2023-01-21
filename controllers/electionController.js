@@ -293,8 +293,11 @@ exports.addVoter = async (req, res) => {
   const { electionId } = req.params;
   const { voterId, password } = req.body;
 
+  // Append the election id infront of the voter id
+  const updatedVoterId = electionId + "_" + voterId;
+
   try {
-    await Voter.addVoter(voterId, password, electionId);
+    await Voter.addVoter(updatedVoterId, password, electionId);
     req.flash("success", "Voter added successfully.");
     res.redirect(`/elections/${electionId}/voters/new`);
   } catch (error) {
