@@ -23,6 +23,10 @@ router.get("/:electionId/preview", electionController.previewElection);
 
 // Launch Election
 router.put("/:electionId/launch", electionController.launchElection);
+
+// End Election
+router.put("/:electionId/end", electionController.endElection);
+
 // Create Question Page
 router.get("/:electionId/questions/new", electionController.createQuestionPage);
 

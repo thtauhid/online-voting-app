@@ -108,6 +108,23 @@ exports.launchElection = async (req, res) => {
   }
 };
 
+// End Election
+exports.endElection = async (req, res) => {
+  try {
+    const { electionId } = req.params;
+    // todo: Check if user is owner of election
+
+    await Election.endElection(electionId);
+    return res.json({
+      success: true,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+    });
+  }
+};
+
 // Create Question Page
 exports.createQuestionPage = async (req, res) => {
   res.render("questions/new", {

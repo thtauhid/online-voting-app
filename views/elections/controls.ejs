@@ -61,7 +61,7 @@
     </p>
   </div>
 
-  <button class="btn btn-danger">End Election</button>
+  <button class="btn btn-danger" id="end-election">End Election</button>
 
   <!-- If election has ended -->
   <% } else if(election.status === 'completed') { %>
@@ -74,3 +74,33 @@
   </div>
   <% } %>
 </section>
+
+<script>
+  const endElectionBtn = document.getElementById("end-election");
+  endElectionBtn.addEventListener("click", async (e) => {
+    const confirm = window.confirm(
+      "The election will be ended and the results will be available to the public. Click OK to continue."
+    );
+    if (confirm) {
+      e.preventDefault();
+
+      // Send request to end election
+      const response = await fetch(`/elections/<%= election.id %>/end`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _csrf: "<%= csrfToken %>",
+        }),
+      });
+
+      // If response is success, send to election page
+      if (response.status === 200) {
+        // TODO: Send  success flash messages
+        window.location.href = `/elections/<%= election.id %>`;
+      }
+      // TODO: send error flash messages to same page
+    }
+  });
+</script>

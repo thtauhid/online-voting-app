@@ -79,6 +79,14 @@ module.exports = (sequelize, DataTypes) => {
       election.status = "lanuched";
       return await election.save();
     }
+
+    static async endElection(electionId) {
+      const election = await this.findByPk(electionId);
+      if (!election) throw new Error("Election not found");
+
+      election.status = "completed";
+      return await election.save();
+    }
   }
   Election.init(
     {
