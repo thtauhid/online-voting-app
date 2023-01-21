@@ -18,6 +18,7 @@ const electionRouter = require("./router/electionRouter");
 const { User, Voter } = require("./models");
 const { checkAdmin, checkVoter } = require("./middlewares");
 const voteController = require("./controllers/voteController");
+const miscController = require("./controllers/miscController");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -171,5 +172,7 @@ app.get(
   checkVoter,
   voteController.votePage
 );
+
+app.get("/404", miscController.notFound);
 
 module.exports = app;
