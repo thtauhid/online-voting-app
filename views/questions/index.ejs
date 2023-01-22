@@ -54,22 +54,28 @@
               .getAttribute("content");
 
             function deleteQuestion(id) {
-              fetch(`questions/${id}`, {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  _csrf: token,
-                }),
-              })
-                .then((res) => {
-                  console.log(res);
-                  if (res.ok) window.location.reload();
+              const confirm = window.confirm(
+                "Delete Question? Click OK to continue."
+              );
+
+              if (confirm) {
+                fetch(`questions/${id}`, {
+                  method: "DELETE",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    _csrf: token,
+                  }),
                 })
-                .catch((err) => {
-                  console.log(err);
-                });
+                  .then((res) => {
+                    console.log(res);
+                    if (res.ok) window.location.reload();
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }
             }
           </script>
         </div>

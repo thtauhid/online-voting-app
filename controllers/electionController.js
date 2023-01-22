@@ -259,9 +259,7 @@ exports.createOption = async (req, res) => {
       "error",
       "Unable to create option. Minimum 1 character required."
     );
-    res.redirect(
-      `/elections/${electionId}/questions/${questionId}/options/new`
-    );
+    res.redirect(`/elections/${electionId}/questions/${questionId}`);
   }
 };
 
