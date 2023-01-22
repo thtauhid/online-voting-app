@@ -22,6 +22,7 @@
           <div class="alert alert-danger"><%= messages.error %></div>
           <% } %>
           <form action="/e/<%= election.url %>" method="POST" class="mt-5">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <!-- Questions -->
             <ul class="list-group">
               <% for(let question of election.questions) { %>
@@ -49,8 +50,6 @@
               </li>
               <% } %>
             </ul>
-
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <button type="submit" class="btn btn-primary mt-3">Submit</button>
           </form>
         </div>

@@ -1,4 +1,4 @@
-const { Election, Voter } = require("../models/index");
+const { Election, Voter, Response } = require("../models/index");
 
 exports.root = async (req, res) => {
   // If user is logged in, redirect to their respective election page
@@ -40,5 +40,30 @@ exports.votePage = async (req, res) => {
     console.log(error);
     req.flash("error", error.message);
     res.redirect("/404");
+  }
+};
+
+// Add Response
+exports.addResponse = async (req, res) => {
+  const { electionId, voterId } = req.user;
+
+  // Get options
+  let { body: options } = req;
+  // Remove csrf token from options
+  delete options._csrf;
+
+  // Map them properly
+  options = Object.entries(options);
+  // todo: Check if voter is eligible to vote
+  // todo: Check if voter has already voted
+  // Add response
+  try {
+    await Response.addResponses(voterId, electionId, options);
+    req.flash("success", "Your vote has been recorded!");
+    res.redirect("/e");
+  } catch (error) {
+    console.log(error);
+    req.flash("error", error.message);
+    res.redirect("/e");
   }
 };

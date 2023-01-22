@@ -25,7 +25,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser("super secret"));
 app.use(csrf("spuer_secret_for_voting_app_9380", ["POST", "PUT", "DELETE"]));
 app.use(
@@ -172,6 +172,9 @@ app.get(
   checkVoter,
   voteController.votePage
 );
+
+// Add Response
+app.post("/e/:electionUrl", voteController.addResponse);
 
 app.get("/404", miscController.notFound);
 

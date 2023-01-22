@@ -24,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "electionId",
         as: "voters",
       });
+
+      // Election has many responses
+      Election.hasMany(models.Response, {
+        foreignKey: "electionId",
+        as: "responses",
+      });
     }
 
     static async createElection(title, adminId, url) {
