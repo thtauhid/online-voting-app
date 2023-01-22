@@ -339,16 +339,28 @@ exports.addVoter = async (req, res) => {
   const { electionId } = req.params;
   const { voterId, password } = req.body;
 
+  // Check if user has entered voterid
+  if (voterId == 0) {
+    req.flash("error", "Please enter voter id");
+    return res.redirect(`/elections/${electionId}/voters`);
+  }
+
+  // Check if password is empty
+  if (password.length == 0) {
+    req.flash("error", "Please enter password");
+    return res.redirect(`/elections/${electionId}/voters`);
+  }
+
   // Append the election id infront of the voter id
   const updatedVoterId = electionId + "_" + voterId;
 
   try {
     await Voter.addVoter(updatedVoterId, password, electionId);
     req.flash("success", "Voter added successfully.");
-    res.redirect(`/elections/${electionId}/voters`);
+    return res.redirect(`/elections/${electionId}/voters`);
   } catch (error) {
     req.flash("error", error.message);
-    res.redirect(`/elections/${electionId}/voters`);
+    return res.redirect(`/elections/${electionId}/voters`);
   }
 };
 
