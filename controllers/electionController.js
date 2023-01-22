@@ -140,9 +140,12 @@ exports.createQuestionPage = async (req, res) => {
 exports.questionsPage = async (req, res) => {
   const { electionId } = req.params;
   const questions = await Question.getQuestionsByElectionId(electionId);
+  const election = await Election.getElectionById(electionId);
+
   res.render("questions/index", {
     title: "Questions", //todo: send electio title w/ title
     questions,
+    election,
     csrfToken: req.csrfToken(),
   });
 };
@@ -209,7 +212,7 @@ exports.editQuestion = async (req, res) => {
 
   try {
     await Question.updateQuestion(userId, questionId, title, description);
-    res.redirect(`/elections/${electionId}`);
+    res.redirect(`/elections/${electionId}/questions`);
   } catch (error) {
     req.flash("error", error.message);
     res.redirect(`/elections/${electionId}/questions/${questionId}/edit`);
@@ -269,11 +272,13 @@ exports.editOptionPage = async (req, res) => {
   const { electionId } = req.params;
   const { questionId } = req.params;
   const option = await Option.getOptionById(optionId);
+  const question = await Question.getQuestionById(questionId);
   res.render("options/edit", {
     title: "Edit Option: " + option.title,
     option,
     electionId,
     questionId,
+    question,
     csrfToken: req.csrfToken(),
   });
 };
@@ -317,9 +322,11 @@ exports.votersPage = async (req, res) => {
       electionId,
     },
   });
+  const election = await Election.findByPk(electionId);
   res.render("voters/index", {
     title: "Voters",
     voters,
+    election,
     electionId,
     csrfToken: req.csrfToken(),
   });
