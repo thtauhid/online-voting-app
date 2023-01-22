@@ -77,23 +77,30 @@
       launchElectionButton.addEventListener("click", async (e) => {
         // Prevent default behavior
         e.preventDefault();
-        // Send request to launch election
-        const response = await fetch(`/elections/<%= election.id %>/launch`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            _csrf: "<%= csrfToken %>",
-          }),
-        });
 
-        // If response is success, send to election page
-        if (response.status === 200) {
-          // TODO: Send  success flash messages
-          window.location.href = `/elections/<%= election.id %>`;
+        // Ask for confirmation
+        const confirm = window.confirm(
+          "After launching you will not be able to edit/delete questions/options. Click OK to launch election."
+        );
+        if (confirm) {
+          // Send request to launch election
+          const response = await fetch(`/elections/<%= election.id %>/launch`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              _csrf: "<%= csrfToken %>",
+            }),
+          });
+
+          // If response is success, send to election page
+          if (response.status === 200) {
+            // TODO: Send  success flash messages
+            window.location.href = `/elections/<%= election.id %>`;
+          }
+          // TODO: send error flash messages to same page
         }
-        // TODO: send error flash messages to same page
       });
     </script>
   </body>
