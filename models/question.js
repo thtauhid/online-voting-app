@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
           len: [5],
         },
       },
-      description: DataTypes.STRING,
+      description: DataTypes.TEXT,
       electionId: DataTypes.INTEGER,
     },
     {
