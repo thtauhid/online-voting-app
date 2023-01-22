@@ -44,7 +44,7 @@ exports.votePage = async (req, res) => {
 };
 
 // Add Response
-exports.addResponse = async (req, res) => {
+exports.addResponses = async (req, res) => {
   const { electionId, voterId } = req.user;
 
   // Get options
@@ -54,6 +54,8 @@ exports.addResponse = async (req, res) => {
 
   // Map them properly
   options = Object.entries(options);
+  // todo: Check if election is active
+  // todo: check if voter answered all questions
   // todo: Check if voter is eligible to vote
   // todo: Check if voter has already voted
   // Add response

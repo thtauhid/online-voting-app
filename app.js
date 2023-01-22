@@ -174,7 +174,7 @@ app.get(
 );
 
 // Add Response
-app.post("/e/:electionUrl", voteController.addResponse);
+app.post("/e/:electionUrl", voteController.addResponses);
 
 app.get("/404", miscController.notFound);
 
