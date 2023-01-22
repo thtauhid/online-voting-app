@@ -20,22 +20,22 @@
           </span>
           <div class="d-flex justify-content-between align-items-center">
             <h1 class=""><%= title %></h1>
-            <span
-              ><a href="/elections/new" class="btn btn-primary"
-                >Create Election</a
-              ></span
-            >
           </div>
 
+          <% if(elections.length) { %>
           <p class="mt-3">You have <%= elections.length %> elections</p>
-
-          <ul class="list-group">
+          <ul class="">
             <% for (let election of elections) { %>
-            <li class="list-group-item">
+            <li class="">
               <a href="/elections/<%= election.id %>"><%= election.title %></a>
             </li>
             <% } %>
           </ul>
+          <% } else { %>
+          <p class="mt-3">You haven't created any election yet.</p>
+          <% } %>
+
+          <p class="mt-3"><a href="/elections/new">Create New Election</a></p>
         </div>
       </div>
     </div>

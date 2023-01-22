@@ -44,16 +44,18 @@ exports.getElections = async (req, res) => {
 // Get Single Election
 exports.getSingleElection = async (req, res) => {
   try {
-    const { id: electionId } = req.params;
+    const { electionId } = req.params;
     const election = await Election.getElectionById(electionId);
-    const questions = await Question.getQuestionsByElectionId(electionId);
-    const voters = await Voter.getVotersByElectionId(electionId);
+    //todo: get numbers of questions and voters also
+    // const questions = await Question.getQuestionsByElectionId(electionId);
+    // const voters = await Voter.getVotersByElectionId(electionId);
 
+    console.log(election);
     res.render("elections/single", {
       title: election.title,
       election,
-      questions,
-      voters,
+      // questions,
+      // voters,
       csrfToken: req.csrfToken(),
     });
   } catch (error) {
@@ -131,6 +133,17 @@ exports.createQuestionPage = async (req, res) => {
     title: "Create New Question",
     csrfToken: req.csrfToken(),
     electionId: req.params.electionId,
+  });
+};
+
+// Questions page
+exports.questionsPage = async (req, res) => {
+  const { electionId } = req.params;
+  const questions = await Question.getQuestionsByElectionId(electionId);
+  res.render("questions/index", {
+    title: "Questions", //todo: send electio title w/ title
+    questions,
+    csrfToken: req.csrfToken(),
   });
 };
 
@@ -298,6 +311,22 @@ exports.deleteOption = async (req, res) => {
   }
 };
 
+// Voters Page
+exports.votersPage = async (req, res) => {
+  const { electionId } = req.params;
+  const voters = await Voter.findAll({
+    where: {
+      electionId,
+    },
+  });
+  res.render("voters/index", {
+    title: "Voters",
+    voters,
+    electionId,
+    csrfToken: req.csrfToken(),
+  });
+};
+
 // Add Voter Page
 exports.addVoterPage = async (req, res) => {
   res.render("voters/new", {
@@ -318,9 +347,9 @@ exports.addVoter = async (req, res) => {
   try {
     await Voter.addVoter(updatedVoterId, password, electionId);
     req.flash("success", "Voter added successfully.");
-    res.redirect(`/elections/${electionId}/voters/new`);
+    res.redirect(`/elections/${electionId}/voters/`);
   } catch (error) {
     req.flash("error", error.message);
-    res.redirect(`/elections/${electionId}/voters/new`);
+    res.redirect(`/elections/${electionId}/voters/`);
   }
 };

@@ -13,7 +13,7 @@ router.post("/", electionController.createElection);
 router.get("/", electionController.getElections);
 
 // Get Single Election
-router.get("/:id", electionController.getSingleElection);
+router.get("/:electionId", electionController.getSingleElection);
 
 // Change Election URL
 router.post("/:electionId/url", electionController.changeElectionUrl);
@@ -29,6 +29,9 @@ router.put("/:electionId/end", electionController.endElection);
 
 // Create Question Page
 router.get("/:electionId/questions/new", electionController.createQuestionPage);
+
+// Questions Page
+router.get("/:electionId/questions", electionController.questionsPage);
 
 // Create Question
 router.post("/:electionId/questions", electionController.createQuestion);
@@ -86,6 +89,9 @@ router.delete(
   "/:electionId/questions/:questionId/options/:optionId",
   electionController.deleteOption
 );
+
+// Voters Page
+router.get("/:electionId/voters", electionController.votersPage);
 
 // Add Voter Page
 router.get("/:electionId/voters/new", electionController.addVoterPage);

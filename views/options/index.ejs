@@ -1,35 +1,48 @@
 <section class="mt-5">
-  <div class="d-flex justify-content-between align-items-center">
-    <h2>Options</h2>
-    <a
-      href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/new"
-      class="btn btn-outline-primary"
-      >Create Option</a
-    >
-  </div>
-  <hr />
-  <p>You have <%= options.length %> options</p>
-
-  <ul class="list-group">
+  <% if(options.length) { %>
+  <p>You have <%=options.length %> options:</p>
+  <ul>
     <% for (let option of options) { %>
-    <li class="list-group-item d-flex justify-content-between">
+    <li class="d-flex justify-content-between">
       <span id="option-<%= option.id %>"><%= option.title %></span>
       <span>
         <a
           href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/<%= option.id %>/edit"
-          class="btn btn-sm btn-outline-info"
           >Edit</a
         >
-        <a
-          href="#"
-          class="btn btn-sm btn-outline-danger"
-          onclick="deleteOption(<%= option.id %>)"
-          >Delete</a
-        >
+        <a href="#" onclick="deleteOption(<%= option.id %>)">Delete</a>
       </span>
     </li>
     <% } %>
   </ul>
+  <% } else { %>
+  <p>You haven't added any answer options yet!</p>
+  <% } %>
+</section>
+<section>
+  <form
+    action="/elections/<%= electionId %>/questions/<%= questionId %>/options"
+    method="POST"
+  >
+    <% if (messages.error) { %>
+    <div class="alert alert-danger"><%= messages.error %></div>
+    <% } %>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <div class="row">
+      <div class="col">
+        <input
+          type="text"
+          name="title"
+          id="title"
+          class="form-control"
+          placeholder="Answer Option"
+        />
+      </div>
+      <div class="col">
+        <button type="submit" class="btn btn-primary">Add Answer Option</button>
+      </div>
+    </div>
+  </form>
 </section>
 
 <script>

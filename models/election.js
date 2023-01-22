@@ -49,7 +49,20 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static async getElectionById(id) {
-      return await this.findByPk(id);
+      return await this.findByPk(id, {
+        include: [
+          {
+            model: sequelize.models.Question,
+            as: "questions",
+            // attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "count"]],
+          },
+          {
+            model: sequelize.models.Voter,
+            as: "voters",
+            // attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "count"]],
+          },
+        ],
+      });
     }
 
     static async changeElectionUrl(electionId, url) {

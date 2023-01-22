@@ -19,12 +19,28 @@
         <div class="col-md-6 offset-md-3">
           <%- include('../partials/nav'); %>
           <h1 class=""><%= title %></h1>
-          <!-- Load Questions Section -->
-          <%- include('../questions/index'); %>
-          <!-- Load Voters Section -->
-          <%- include('../voters/index');%>
-          <!-- Load Election Controls -->
-          <%-include('controls'); %>
+          <!-- Question Area -->
+          <div class="my-3">
+            <p>
+              Your election has <%= election.questions.length %> questions in
+              the ballot
+            </p>
+            <a href="/elections/<%= election.id %>/questions"
+              >Manage Questions</a
+            >
+          </div>
+
+          <!-- Voters Area -->
+          <div class="my-3">
+            <p>Your election has <%= election.voters.length %> voters</p>
+            <a href="/elections/<%= election.id %>/voters">Manage Voters</a>
+          </div>
+
+          <div class="my-3">
+            <a href="/elections/<%= election.id %>/questions"
+              >Launch Election</a
+            >
+          </div>
         </div>
       </div>
     </div>
