@@ -99,4 +99,7 @@ router.get("/:electionId/voters/new", electionController.addVoterPage);
 // Add Voter
 router.post("/:electionId/voters", electionController.addVoter);
 
+// Delete Voter
+router.delete("/:electionId/voters/:id", electionController.deleteVoter);
+
 module.exports = router;

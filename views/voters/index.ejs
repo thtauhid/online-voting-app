@@ -9,6 +9,7 @@
       href="https://bootswatch.com/5/zephyr/bootstrap.min.css"
     />
     <meta name="csrf-token" content="<%= csrfToken %>" />
+
     <title><%= title %></title>
   </head>
   <body>
@@ -25,6 +26,11 @@
               <li class="d-flex justify-content-between">
                 <span id="voter-<%= voter.voterId %>"
                   ><%= voter.voterId %>
+                </span>
+                <span>
+                  <a href="#" onclick="deleteVoter(<%= voter.id %>)">
+                    Delete
+                  </a>
                 </span>
               </li>
               <% } %>
@@ -82,5 +88,37 @@
         </div>
       </div>
     </div>
+
+    <script>
+      let token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+
+      function deleteVoter(id) {
+        console.log(id);
+        const confirm = window.confirm(
+          "Are you sure you want to delete this voter? Click OK to continue."
+        );
+
+        if (confirm) {
+          fetch(`voters/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              _csrf: token,
+            }),
+          })
+            .then((res) => {
+              console.log(res);
+              if (res.ok) window.location.reload();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      }
+    </script>
   </body>
 </html>

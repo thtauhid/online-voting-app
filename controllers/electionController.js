@@ -345,9 +345,22 @@ exports.addVoter = async (req, res) => {
   try {
     await Voter.addVoter(updatedVoterId, password, electionId);
     req.flash("success", "Voter added successfully.");
-    res.redirect(`/elections/${electionId}/voters/`);
+    res.redirect(`/elections/${electionId}/voters`);
   } catch (error) {
     req.flash("error", error.message);
-    res.redirect(`/elections/${electionId}/voters/`);
+    res.redirect(`/elections/${electionId}/voters`);
+  }
+};
+
+// Delete Voter
+exports.deleteVoter = async (req, res) => {
+  const { id: voterId } = req.params; // the 'id' is typed as 'voterId' for consistency
+  const { id: adminId } = req.user;
+
+  try {
+    await Voter.deleteVoter(adminId, voterId);
+    return res.json({ success: true });
+  } catch (error) {
+    return res.json({ success: false });
   }
 };

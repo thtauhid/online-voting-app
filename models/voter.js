@@ -42,6 +42,15 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
+    static async deleteVoter(adminId, voterId) {
+      const voter = await Voter.findByPk(voterId);
+      if (!voter) throw new Error("Voter not found");
+
+      // todo: check if adminId is the same as voter.electionId -> adminId
+
+      await voter.destroy();
+    }
+
     static async verifyVoterAndElection(voterId, electionId) {
       const find = await Voter.findOne({
         where: {
