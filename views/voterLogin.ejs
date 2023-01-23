@@ -17,18 +17,18 @@
       <div class="row">
         <div class="col-md-6 offset-md-3">
           <h1 class="text-center"><%= title %></h1>
-          <form action="/auth/session" method="POST">
+          <form action="/e/session" method="POST">
             <% if (messages.error) { %>
             <div class="alert alert-danger"><%= messages.error %></div>
             <% } %>
 
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <div class="form-group mt-3">
-              <label for="email">Email</label>
+              <label for="voterId">Voter ID</label>
               <input
-                type="email"
-                name="email"
-                id="email"
+                type="text"
+                name="voterId"
+                id="voterId"
                 class="form-control"
               />
             </div>
@@ -45,9 +45,6 @@
               <button type="submit" class="btn btn-primary">Log in</button>
             </div>
           </form>
-          <p class="mt-3">
-            Don't have an account? <a href="/auth/signup">Signup</a>
-          </p>
         </div>
       </div>
     </div>

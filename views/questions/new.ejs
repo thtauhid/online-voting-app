@@ -15,6 +15,7 @@
     <div class="container mt-5">
       <div class="row">
         <div class="col-md-6 offset-md-3">
+          <%- include('../partials/nav'); %>
           <h1 class="text-center"><%= title %></h1>
           <form action="/elections/<%= electionId%>/questions" method="POST">
             <% if (messages.error) { %>
@@ -37,6 +38,11 @@
               <button type="submit" class="btn btn-primary">Create</button>
             </div>
           </form>
+          <div class="mt-3">
+            <a href="/elections/<%= electionId %>/questions"
+              >Back to Questions</a
+            >
+          </div>
         </div>
       </div>
     </div>

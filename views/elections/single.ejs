@@ -8,39 +8,109 @@
       rel="stylesheet"
       href="https://bootswatch.com/5/zephyr/bootstrap.min.css"
     />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <meta name="election-id" content="<%= election.id %>" />
     <title><%= title %></title>
   </head>
   <body>
-    <div class="container mt-5">
+    <%- include('../partials/header'); %>
+    <div class="container my-5">
       <div class="row">
         <div class="col-md-6 offset-md-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <h1 class=""><%= title %></h1>
-            <span
-              ><a
-                href="/elections/<%= election.id %>/questions/new"
-                class="btn btn-primary"
-                >Create Question</a
-              ></span
+          <%- include('../partials/nav'); %>
+          <h1 class=""><%= title %></h1>
+          <!-- Question Area -->
+          <div class="my-3">
+            <p>
+              Your election has <%= election.questions.length %> questions in
+              the ballot
+            </p>
+            <a href="/elections/<%= election.id %>/questions"
+              >Manage Questions</a
             >
           </div>
 
-          <p class="mt-3">
-            <!-- Get number of elections -->
-            You have <%= questions.length %> questions
-          </p>
+          <!-- Voters Area -->
+          <div class="my-3">
+            <p>Your election has <%= election.voters.length %> voters</p>
+            <a href="/elections/<%= election.id %>/voters">Manage Voters</a>
+          </div>
 
-          <ul class="list-group">
-            <% for (let question of questions) { %>
-            <li class="list-group-item">
-              <a href="<%=election.id %>/questions/<%= question.id %>"
-                ><%= question.title %></a
+          <!-- Election Control -->
+          <% if (election.status === 'created') { %>
+          <!-- Election in created -->
+          <div class="my-3">
+            <a href="/elections/<%= election.id %>/preview">Launch Election</a>
+          </div>
+
+          <% } else if(election.status === 'lanuched') { %>
+
+          <!-- Election is launched -->
+
+          <a href="preview-results">Preview Result</a>
+
+          <div class="alert alert-info my-3">
+            <p>
+              Your election is now live. Voters can now access your election
+              using the URL below.
+            </p>
+            <p>
+              <a href="https://voing-app.onrender.com/e/<%= election.url %>"
+                >https://voing-app.onrender.com/e/<%= election.url %></a
               >
-            </li>
-            <% } %>
-          </ul>
+            </p>
+          </div>
+
+          <button class="btn btn-danger" id="end-election">End Election</button>
+
+          <% } else if(election.status === 'completed') { %>
+
+          <!-- Election is completed/ended -->
+
+          <div class="alert alert-info">
+            <p>Your election has ended. You can now view the results.</p>
+          </div>
+
+          <% } else { %>
+          <!-- Someting is wrong  -->
+          <div class="alert alert-warning">
+            <p>Something went wrong</p>
+          </div>
+          <% } %>
+          <div class="mt-3">
+            <a href="/elections">Back to Elections</a>
+          </div>
         </div>
       </div>
     </div>
+    <script>
+      const endElectionBtn = document.getElementById("end-election");
+      endElectionBtn.addEventListener("click", async (e) => {
+        const confirm = window.confirm(
+          "The election will be ended and the results will be available to the public. Click OK to continue."
+        );
+        if (confirm) {
+          e.preventDefault();
+
+          // Send request to end election
+          const response = await fetch(`/elections/<%= election.id %>/end`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              _csrf: "<%= csrfToken %>",
+            }),
+          });
+
+          // If response is success, send to election page
+          if (response.status === 200) {
+            // TODO: Send  success flash messages
+            window.location.href = `/elections/<%= election.id %>`;
+          }
+          // TODO: send error flash messages to same page
+        }
+      });
+    </script>
   </body>
 </html>

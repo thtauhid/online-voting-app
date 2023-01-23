@@ -1,0 +1,86 @@
+<section class="mt-5">
+  <% if(options.length) { %>
+  <p>You have <%=options.length %> options:</p>
+  <ul>
+    <% for (let option of options) { %>
+    <li class="d-flex justify-content-between">
+      <span id="option-<%= option.id %>"><%= option.title %></span>
+      <span>
+        <a
+          href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/<%= option.id %>/edit"
+          >Edit</a
+        >
+        <a href="#" onclick="deleteOption(<%= option.id %>)">Delete</a>
+      </span>
+    </li>
+    <% } %>
+  </ul>
+  <% } else { %>
+  <p>You haven't added any answer options yet!</p>
+  <% } %>
+</section>
+<section>
+  <form
+    action="/elections/<%= electionId %>/questions/<%= questionId %>/options"
+    method="POST"
+  >
+    <% if (messages.error) { %>
+    <div class="alert alert-danger"><%= messages.error %></div>
+    <% } %>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <div class="row">
+      <div class="col">
+        <input
+          type="text"
+          name="title"
+          id="title"
+          class="form-control"
+          placeholder="Answer Option"
+        />
+      </div>
+      <div class="col">
+        <button type="submit" class="btn btn-primary">Add Answer Option</button>
+      </div>
+    </div>
+  </form>
+  <div class="mt-3">
+    <a href="/elections/<%= electionId %>/questions">Back to Questions</a>
+  </div>
+</section>
+
+<script>
+  let token = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+  let questionId = document
+    .querySelector('meta[name="question-id"]')
+    .getAttribute("content");
+  let electionId = document
+    .querySelector('meta[name="election-id"]')
+    .getAttribute("content");
+
+  function deleteOption(id) {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this option? Click OK to continue."
+    );
+
+    if (confirm) {
+      fetch(`/elections/${electionId}/questions/${questionId}/options/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _csrf: token,
+        }),
+      })
+        .then((res) => {
+          console.log(res);
+          if (res.ok) window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+</script>

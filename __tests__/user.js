@@ -27,35 +27,37 @@ describe("User", () => {
   });
 
   test("Sign up a new user", async () => {
-    const response = await agent.get("/signup");
+    const response = await agent.get("/auth/signup");
     const csrfToken = getCsrfToken(response.text);
     const user = {
       name: "John Doe",
       email: "john.doe@example.com",
       password: "password",
     };
-    const res = await agent.post("/user").send({ ...user, _csrf: csrfToken });
+    const res = await agent
+      .post("/auth/user")
+      .send({ ...user, _csrf: csrfToken });
     expect(res.status).toBe(302);
     expect(res.header.location).toContain("/elections");
   });
 
   test("User Login", async () => {
-    const response = await agent.get("/login");
+    const response = await agent.get("/auth/login");
     const csrfToken = getCsrfToken(response.text);
     const user = {
       email: "john.doe@example.com",
       password: "password",
     };
     const res = await agent
-      .post("/session")
+      .post("/auth/session")
       .send({ ...user, _csrf: csrfToken });
     expect(res.status).toBe(302);
     expect(res.header.location).toContain("/elections");
   });
 
   test("User Logout", async () => {
-    const res = await agent.get("/logout");
+    const res = await agent.get("/auth/logout");
     expect(res.status).toBe(302);
-    expect(res.header.location).toContain("/login");
+    expect(res.header.location).toContain("/auth/login");
   });
 });

@@ -11,9 +11,9 @@ function getCsrfToken(html) {
 }
 
 const login = async (agent, email, password) => {
-  let res = await agent.get("/login");
+  let res = await agent.get("/auth/login");
   let csrfToken = getCsrfToken(res.text);
-  return agent.post("/session").send({
+  return agent.post("/auth/session").send({
     email,
     password,
     _csrf: csrfToken,
@@ -29,14 +29,14 @@ describe("Election", () => {
     // Create a new user
     // Temporary solution
     // Need to find a better way to do this
-    const response = await agent.get("/signup");
+    const response = await agent.get("/auth/signup");
     const csrfToken = getCsrfToken(response.text);
     const user = {
       name: "John Doe 2",
       email: "john.doe2@example.com",
       password: "password",
     };
-    await agent.post("/user").send({ ...user, _csrf: csrfToken });
+    await agent.post("/auth/user").send({ ...user, _csrf: csrfToken });
   });
 
   afterAll(async () => {
@@ -95,7 +95,7 @@ describe("Election", () => {
     // Checking if the option is added to the question
     response = await agent.get("/elections/1/questions/1");
     const $ = cherio.load(response.text);
-    const firstListItem = $("ul > li")[0].children[0].data;
+    const firstListItem = $("#option-1")[0].children[0].data;
 
     expect(firstListItem).toContain("Test Option");
   });
