@@ -61,6 +61,17 @@ module.exports = (sequelize, DataTypes) => {
       if (!find) throw new Error("Voter not found");
       return { verified: true };
     }
+
+    static async updateVoterStatus(voterId, status) {
+      try {
+        const voter = await Voter.getVoterById(voterId);
+        voter.voted = status;
+        await voter.save();
+      } catch (error) {
+        console.log(error);
+        throw new Error("Error updating voter status");
+      }
+    }
   }
   Voter.init(
     {

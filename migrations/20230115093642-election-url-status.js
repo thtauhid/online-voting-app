@@ -15,7 +15,7 @@ module.exports = {
     });
 
     await queryInterface.addColumn("Elections", "status", {
-      type: Sequelize.ENUM("created", "lanuched", "completed"),
+      type: Sequelize.ENUM("created", "launched", "completed"),
       defaultValue: "created",
     });
   },

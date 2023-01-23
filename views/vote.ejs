@@ -20,7 +20,12 @@
 
           <% if (messages.error) { %>
           <div class="alert alert-danger"><%= messages.error %></div>
-          <% } %>
+          <% } %> <% if(voter.voted) { %>
+          <div class="alert alert-success mt-3">
+            You have already voted! <br />
+            Please wait for the results
+          </div>
+          <% } else { %>
           <form action="/e/<%= election.url %>" method="POST" class="mt-5">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <!-- Questions -->
@@ -52,6 +57,7 @@
             </ul>
             <button type="submit" class="btn btn-primary mt-3">Submit</button>
           </form>
+          <% } %>
         </div>
       </div>
     </div>

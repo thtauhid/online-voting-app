@@ -29,11 +29,14 @@ exports.votePage = async (req, res) => {
   try {
     await Voter.verifyVoterAndElection(req.user.voterId, req.user.electionId);
     const election = await Election.getFullElectionById(req.user.electionId);
-    console.log({ election });
+    const voter = await Voter.getVoterById(req.user.voterId);
+
+    console.log({ voter });
 
     res.render("vote", {
       title: election.title,
       election,
+      voter,
       csrfToken: req.csrfToken(),
     });
   } catch (error) {
@@ -46,6 +49,7 @@ exports.votePage = async (req, res) => {
 // Add Response
 exports.addResponses = async (req, res) => {
   const { electionId, voterId } = req.user;
+  const { electionUrl } = req.params;
 
   // Get options
   let { body: options } = req;
@@ -54,18 +58,32 @@ exports.addResponses = async (req, res) => {
 
   // Map them properly
   options = Object.entries(options);
-  // todo: Check if election is active
+
+  // Check if election is active
+  const election = await Election.getElectionById(electionId);
+  if (election.status !== "launched") {
+    req.flash("error", "Election is not active");
+    return res.redirect(`/e/${electionUrl}`);
+  }
+
   // todo: check if voter answered all questions
   // todo: Check if voter is eligible to vote
-  // todo: Check if voter has already voted
-  // Add response
+
   try {
+    // Change voter status to true
+    await Voter.updateVoterStatus(voterId, true);
+
+    // Add responses
     await Response.addResponses(voterId, electionId, options);
+
     req.flash("success", "Your vote has been recorded!");
-    res.redirect("/e");
+    return res.render("voted", {
+      title: "Vote Recorded",
+      election,
+    });
   } catch (error) {
     console.log(error);
     req.flash("error", error.message);
-    res.redirect("/e");
+    return res.redirect(`/e/${electionUrl}`);
   }
 };

@@ -95,7 +95,7 @@ module.exports = (sequelize, DataTypes) => {
       const election = await this.findByPk(electionid);
       if (!election) throw new Error("Election not found");
 
-      election.status = "lanuched";
+      election.status = "launched";
       return await election.save();
     }
 
@@ -134,7 +134,7 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       status: {
-        type: DataTypes.ENUM("created", "lanuched", "completed"),
+        type: DataTypes.ENUM("created", "launched", "completed"),
         defaultValue: "created",
       },
     },
