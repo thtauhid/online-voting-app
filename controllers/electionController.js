@@ -186,6 +186,13 @@ exports.createQuestion = async (req, res) => {
   const { electionId } = req.params;
 
   try {
+    // Check if election is launched
+    const election = await Election.getElectionById(electionId);
+    if (election.status != "created") {
+      req.flash("error", "Election is already launched/completed");
+      return res.redirect(`/elections/${electionId}/questions`);
+    }
+
     const question = await Question.createQuestion(
       title,
       description,

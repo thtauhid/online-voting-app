@@ -47,7 +47,9 @@
             <p class="">You haven't created any question yet</p>
             <% } %>
           </section>
+          <% if(election.status == 'created') { %>
           <a class="mt-3" href="questions/new">Create Question</a>
+          <% } %>
           <div class="mt-3">
             <a href="/elections/<%= election.id %>"
               >Back to Election: <%= election.title %></a
