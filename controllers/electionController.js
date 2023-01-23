@@ -251,11 +251,19 @@ exports.editQuestion = async (req, res) => {
 
 // Delete Question
 exports.deleteQuestion = async (req, res) => {
-  const { questionId } = req.params;
+  const { electionId, questionId } = req.params;
   const { id: userId } = req.user;
-  console.log({ userId, questionId });
 
   try {
+    // ensure there is atleast 1 question in the ballot
+    const questionCount = await Question.getCountByElectionId(electionId);
+    if (questionCount < 2) {
+      req.flash("error", "Election must have atleast 1 question");
+      return res.status(400).json({
+        success: false,
+      });
+    }
+
     // First delete all options associated with the question
     // If all associated options are not deleted, then the question cannot be deleted
     await await Option.deleteAllOptionsByQuestionId(questionId);

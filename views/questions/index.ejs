@@ -31,12 +31,14 @@
                   id="question-<%= question.id %>"
                   ><%= question.title %></a
                 >
+                <% if(questions.length > 1) { %>
                 <span>
                   <a href="questions/<%= question.id %>/edit">Edit</a>
                   <a href="#" onclick="deleteQuestion(<%= question.id %>)"
                     >Delete</a
                   >
                 </span>
+                <% } %>
               </li>
               <% } %>
             </ul>
@@ -79,6 +81,7 @@
                   })
                   .catch((err) => {
                     console.log(err);
+                    window.location.reload();
                   });
               }
             }
