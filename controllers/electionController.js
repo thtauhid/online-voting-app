@@ -1,4 +1,4 @@
-const { Election, Question, Option, Voter } = require("../models");
+const { Election, Question, Option, Voter, Response } = require("../models");
 const utils = require("../utils");
 
 // Create Election Page
@@ -460,9 +460,31 @@ exports.statsPage = async (req, res) => {
   const { electionId } = req.params;
   const election = await Election.getFullElectionById(electionId);
 
+  // Get the total number of voters
+  const votes = await Voter.getVoterNumbersByElectionId(electionId);
+
+  let questions = election.questions;
+
+  for (let question of questions) {
+    // Get the total number of votes for each question
+    const questionVotes = await Response.getCountByQuestionId(question.id);
+
+    // Get the total number of votes for each option
+    for (let option of question.options) {
+      const optionVotes = await Response.getCountByOptionId(option.id);
+      option.votes = optionVotes;
+    }
+
+    question.votes = questionVotes;
+  }
+
+  console.log({ questions });
+
   res.render("elections/stats", {
     title: "Stats",
     election,
+    questions,
+    votes,
     electionId,
     csrfToken: req.csrfToken(),
   });

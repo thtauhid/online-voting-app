@@ -17,11 +17,48 @@
       <div class="row">
         <div class="col-md-6 offset-md-3">
           <h1 class="text-center"><%= title %></h1>
+
+          <div class="">
+            <div class="row">
+              <table>
+                <tr>
+                  <th>Total Voters</th>
+                  <td><%= votes.total %></td>
+                </tr>
+                <tr>
+                  <th>Voted</th>
+                  <td><%= votes.voted %></td>
+                </tr>
+                <tr>
+                  <th>Not Voted</th>
+                  <td><%= votes.notVoted %></td>
+                </tr>
+              </table>
+              <div class="row mt-4">
+                <% for(let question of questions) { %>
+                <!--  -->
+                <h2><%= question.title %></h2>
+
+                <% for(let option of question.options) { %>
+                <!--  -->
+                <p>
+                  <%= option.title %>
+                  <span class="bg-primary text-white p-2 rounded"
+                    ><%= option.votes %>
+                  </span>
+                </p>
+
+                <!--  -->
+                <% } %>
+
+                <hr />
+                <!--  -->
+                <% } %>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <script>
-      console.log(<%= data %>);
-    </script>
   </body>
 </html>

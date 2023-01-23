@@ -72,6 +72,16 @@ module.exports = (sequelize, DataTypes) => {
         throw new Error("Error updating voter status");
       }
     }
+
+    // Get voter numbers by electionId
+    static async getVoterNumbersByElectionId(electionId) {
+      const total = await Voter.count({ where: { electionId } });
+      const voted = await Voter.count({ where: { electionId, voted: true } });
+      const notVoted = await Voter.count({
+        where: { electionId, voted: false },
+      });
+      return { total, voted, notVoted };
+    }
   }
   Voter.init(
     {
