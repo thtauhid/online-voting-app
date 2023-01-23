@@ -277,6 +277,15 @@ describe("Election", () => {
 
     expect(response.statusCode).toBe(302);
 
+    // Change url of election
+    res = await agent.get("/elections/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.post("/elections/2/url").send({
+      electionUrl: "test",
+      _csrf: csrfToken,
+    });
+
     // Launch the election
 
     res = await agent.get("/elections/new");
