@@ -227,4 +227,124 @@ describe("Election", () => {
 
     expect(firstListItem).toBe(undefined);
   });
+
+  test("Launch an election", async () => {
+    // Create new election
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+
+    let res = await agent.get("/elections/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections").send({
+      title: "New Election",
+      _csrf: csrfToken,
+    });
+    expect(response.statusCode).toBe(302);
+    expect(response.header.location).toContain("/elections");
+
+    // Create new question
+    res = await agent.get("/elections/2/questions/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.post("/elections/2/questions").send({
+      title: "Test Question",
+      description: "Test Description",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+    expect(response.header.location).toContain("/elections/2/questions/4");
+
+    // Create 2 new option
+    res = await agent.get("/elections/2/questions/4/options/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.post("/elections/2/questions/4/options").send({
+      title: "Test Option 1",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    res = await agent.get("/elections/2/questions/4/options/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.post("/elections/2/questions/4/options").send({
+      title: "Test Option 2",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    // Launch the election
+
+    res = await agent.get("/elections/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.put("/elections/2/launch").send({
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    // Checking if the election is launched
+    response = await agent.get("/elections/2");
+
+    expect(response.text).toContain("Your election is now live.");
+  });
+
+  test("Create Voter", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/2/voters").send({
+      voterId: "testVoter",
+      password: "testPassword",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    // Checking if the voter is added to the election
+    response = await agent.get("/elections/2/voters");
+    const $ = cherio.load(response.text);
+    const firstListItem = $("#voter-2_testVoter")[0].children[0].data;
+
+    expect(firstListItem).toContain("2_testVoter");
+  });
+
+  test("Delete Voter", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/2/voters").send({
+      voterId: "testVoter2",
+      password: "testPassword",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    res = await agent.get("/elections/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.delete("/elections/2/voters/2").send({
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    // Checking if the voter is deleted from the election
+    response = await agent.get("/elections/2/voters");
+
+    const $ = cherio.load(response.text);
+    const firstListItem = $("#voter-2_testVoter2")[0];
+
+    expect(firstListItem).toBe(undefined);
+  });
 });
