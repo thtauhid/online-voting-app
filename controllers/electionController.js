@@ -241,6 +241,13 @@ exports.editQuestion = async (req, res) => {
   const { id: userId } = req.user;
 
   try {
+    // Ensure election is not launched/completed
+    const election = await Election.getElectionById(electionId);
+    if (election.status !== "created") {
+      req.flash("error", "Election has already been launched/completed");
+      res.redirect(`/elections/${electionId}/questions`);
+    }
+
     await Question.updateQuestion(userId, questionId, title, description);
     res.redirect(`/elections/${electionId}/questions`);
   } catch (error) {

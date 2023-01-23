@@ -31,7 +31,8 @@
                   id="question-<%= question.id %>"
                   ><%= question.title %></a
                 >
-                <% if(questions.length > 1) { %>
+                <% if( (election.status == 'created') && (questions.length > 1)
+                ) { %>
                 <span>
                   <a href="questions/<%= question.id %>/edit">Edit</a>
                   <a href="#" onclick="deleteQuestion(<%= question.id %>)"

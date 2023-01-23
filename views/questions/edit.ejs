@@ -17,6 +17,7 @@
         <div class="col-md-6 offset-md-3">
           <%- include('../partials/nav'); %>
           <h1 class="text-center"><%= title %></h1>
+          <% if(question.status == 'created') { %>
           <form
             action="/elections/<%= electionId%>/questions/<%= question.id %>"
             method="POST"
@@ -49,6 +50,11 @@
               <button type="submit" class="btn btn-primary">Update</button>
             </div>
           </form>
+          <% } else { %>
+          <div class="alert alert-danger">
+            Questions can not be edited after election is launched.
+          </div>
+          <% } %>
           <div class="mt-3">
             <a href="/elections/<%= electionId %>/questions"
               >Back to Questions</a
