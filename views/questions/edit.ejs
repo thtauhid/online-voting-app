@@ -17,7 +17,7 @@
         <div class="col-md-6 offset-md-3">
           <%- include('../partials/nav'); %>
           <h1 class="text-center"><%= title %></h1>
-          <% if(question.status == 'created') { %>
+          <% if(election.status == 'created') { %>
           <form
             action="/elections/<%= electionId%>/questions/<%= question.id %>"
             method="POST"

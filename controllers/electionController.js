@@ -236,8 +236,10 @@ exports.editQuestionPage = async (req, res) => {
   const { questionId } = req.params;
   const { electionId } = req.params;
   const question = await Question.getQuestionById(questionId);
+  const election = await Election.getElectionById(electionId);
   res.render("questions/edit", {
     title: "Edit Question: " + question.title,
+    election,
     question,
     electionId,
     csrfToken: req.csrfToken(),

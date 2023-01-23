@@ -79,6 +79,34 @@ describe("Election", () => {
     expect(response.header.location).toContain("/elections/1/questions/1");
   });
 
+  test("Edit a question", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/1/questions/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/1/questions").send({
+      title: "Test Question",
+      description: "Test Description",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+    expect(response.header.location).toContain("/elections/1/questions/2");
+
+    res = await agent.get("/elections/1/questions/2/edit");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.post("/elections/1/questions/2").send({
+      title: "Test Question 2",
+      description: "Test Description 2",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+    expect(response.header.location).toContain("/elections/1/questions");
+  });
+
   test("Create a option in question", async () => {
     const agent = request.agent(server);
     await login(agent, "john.doe2@example.com", "password");
