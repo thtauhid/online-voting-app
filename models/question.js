@@ -54,6 +54,10 @@ module.exports = (sequelize, DataTypes) => {
     static async deleteQuestion(userId, questionId) {
       return await this.destroy({ where: { id: questionId } });
     }
+
+    static async getCountByElectionId(electionId) {
+      return await this.count({ where: { electionId } });
+    }
   }
   Question.init(
     {

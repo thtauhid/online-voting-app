@@ -98,17 +98,47 @@ exports.launchElection = async (req, res) => {
     const { electionId } = req.params;
     // TODO: Check if user is owner of election
 
+    // Check if election has atleast 1 question
+    const questionCount = await Question.getCountByElectionId(electionId);
+    if (questionCount < 1) {
+      req.flash("error", "Election must have atleast 1 question");
+      return res.status(400).json({
+        success: false,
+      });
+    }
+
+    // Check if each question has atleast 2 options
+    const questions = await Question.getQuestionsByElectionId(electionId);
+    console.log({ questions });
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      const optionCount = await Option.getCountByQuestionId(question.id);
+      if (optionCount < 2) {
+        req.flash(
+          "error",
+          `Question "${question.title}" must have atleast 2 options`
+        );
+        return res.status(400).json({
+          success: false,
+        });
+      }
+    }
+
     await Election.launchElection(electionId);
 
     return res.json({
       success: true,
     });
   } catch (error) {
-    return res.json({
+    req.flash("error", error.message);
+
+    return res.status(400).json({
       success: false,
     });
   }
 };
+
+// Helper function to check if question has atleast 2 options
 
 // End Election
 exports.endElection = async (req, res) => {

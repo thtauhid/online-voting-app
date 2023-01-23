@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
     static async getOptionsByQuestionId(questionId) {
       return await this.findAll({ where: { questionId } });
     }
+
+    static async getCountByQuestionId(questionId) {
+      return await this.count({ where: { questionId } });
+    }
   }
   Option.init(
     {

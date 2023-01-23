@@ -30,6 +30,18 @@ module.exports = (sequelize, DataTypes) => {
         throw new Error("Error adding responses");
       }
     }
+
+    static async getCountByElectionId(electionId) {
+      return await this.count({ where: { electionId } });
+    }
+
+    static async getCountByQuestionId(questionId) {
+      return await this.count({ where: { questionId } });
+    }
+
+    static async getCountByOptionId(optionId) {
+      return await this.count({ where: { optionId } });
+    }
   }
   Response.init(
     {

@@ -16,59 +16,58 @@
     <%- include('partials/header'); %>
     <div class="container mt-5">
       <div class="row">
-        <div class="col-md-6 offset-md-3 border border-dark p-5">
+        <div class="col-md-6 offset-md-3 p-5">
           <h2 class="text-center">Preview</h2>
           <p class="text-center">
             This page shows you how your voters will see the election page.
           </p>
-        </div>
-        <div class="col-md-6 offset-md-3 border border-dark p-5">
-          <h1 class="text-center"><%= title %></h1>
           <% if (messages.error) { %>
           <div class="alert alert-danger"><%= messages.error %></div>
           <% } %>
-          <form class="mt-5">
-            <!-- Questions -->
-            <ul class="list-group">
-              <% for(let question of election.questions) { %>
-              <li class="list-group-item">
-                <fieldset class="form-group">
-                  <legend><%= question.title %></legend>
-                  <p><%= question.description %></p>
-                  <!-- Options -->
-                  <% for(let option of question.options) { %>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" required />
-                    <label class="form-check-label" for="<%= option.title %>">
-                      <%= option.title %>
-                    </label>
-                  </div>
-                  <% } %>
-                </fieldset>
-              </li>
-              <% } %>
-            </ul>
-            <button class="btn btn-primary mt-3" name="submitBtn">
-              Submit
-            </button>
-          </form>
         </div>
-        <div class="col-md-6 offset-md-3 border border-dark p-5">
-          <p>
-            Click on the Launch Election Button below to launch the election.
-            <br />
-            Edits are not allowed after election is launched.
-          </p>
-          <button class="btn btn-primary" id="launch-election">
-            Launch Election
-          </button>
+      </div>
+      <div class="col-md-6 offset-md-3 border border-dark p-5">
+        <h1 class="text-center"><%= title %></h1>
+        <form class="mt-5">
+          <!-- Questions -->
+          <ul class="list-group">
+            <% for(let question of election.questions) { %>
+            <li class="list-group-item">
+              <fieldset class="form-group">
+                <legend><%= question.title %></legend>
+                <p><%= question.description %></p>
+                <!-- Options -->
+                <% for(let option of question.options) { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" required />
+                  <label class="form-check-label" for="<%= option.title %>">
+                    <%= option.title %>
+                  </label>
+                </div>
+                <% } %>
+              </fieldset>
+            </li>
+            <% } %>
+          </ul>
+          <button class="btn btn-primary mt-3" name="submitBtn">Submit</button>
+        </form>
+      </div>
+      <div class="col-md-6 offset-md-3 py-5">
+        <p>
+          Click on the Launch Election Button below to launch the election.
+          <br />
+          Edits are not allowed after election is launched.
+        </p>
+        <button class="btn btn-primary" id="launch-election">
+          Launch Election
+        </button>
+      </div>
+      <div class="col-md-6 offset-md-3 mb-5">
+        <div class="mt-3">
+          <a href="/elections/<%= election.id %>"
+            >Back to Election: <%= election.title %>
+          </a>
         </div>
-        <div class="col-md-6 offset-md-3 mb-5">
-          <div class="mt-3">
-            <a href="/elections/<%= election.id %>"
-              >Back to Election: <%= election.title %>
-            </a>
-          </div>
       </div>
     </div>
     <script>
@@ -105,6 +104,8 @@
           if (response.status === 200) {
             // TODO: Send  success flash messages
             window.location.href = `/elections/<%= election.id %>`;
+          } else {
+            window.location.reload();
           }
           // TODO: send error flash messages to same page
         }
