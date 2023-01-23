@@ -47,7 +47,7 @@
 
           <!-- Election is launched -->
 
-          <a href="preview-results">Preview Result</a>
+          <a href="<%= election.id %>/stats">Preview Result</a>
 
           <div class="alert alert-info my-3">
             <p>
@@ -70,6 +70,7 @@
           <div class="alert alert-info">
             <p>Your election has ended. You can now view the results.</p>
           </div>
+          <a href="<%= election.id %>/stats">View Result</a>
 
           <% } else { %>
           <!-- Someting is wrong  -->

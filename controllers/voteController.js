@@ -29,9 +29,36 @@ exports.votePage = async (req, res) => {
   try {
     await Voter.verifyVoterAndElection(req.user.voterId, req.user.electionId);
     const election = await Election.getFullElectionById(req.user.electionId);
-    const voter = await Voter.getVoterById(req.user.voterId);
 
-    console.log({ voter });
+    if (election.status == "completed") {
+      // Get the total number of voters
+      const votes = await Voter.getVoterNumbersByElectionId(election.id);
+
+      let questions = election.questions;
+
+      for (let question of questions) {
+        // Get the total number of votes for each question
+        const questionVotes = await Response.getCountByQuestionId(question.id);
+
+        // Get the total number of votes for each option
+        for (let option of question.options) {
+          const optionVotes = await Response.getCountByOptionId(option.id);
+          option.votes = optionVotes;
+        }
+
+        question.votes = questionVotes;
+      }
+      res.render("elections/stats", {
+        title: "Stats",
+        election,
+        questions,
+        votes,
+        electionId: election.id,
+        csrfToken: req.csrfToken(),
+      });
+    }
+
+    const voter = await Voter.getVoterById(req.user.voterId);
 
     res.render("vote", {
       title: election.title,
