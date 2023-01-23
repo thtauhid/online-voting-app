@@ -102,4 +102,6 @@ router.post("/:electionId/voters", electionController.addVoter);
 // Delete Voter
 router.delete("/:electionId/voters/:id", electionController.deleteVoter);
 
+// Stats Page
+router.get("/:electionId/stats", electionController.statsPage);
 module.exports = router;

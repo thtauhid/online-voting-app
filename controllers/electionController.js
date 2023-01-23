@@ -452,3 +452,16 @@ exports.deleteVoter = async (req, res) => {
     return res.json({ success: false });
   }
 };
+
+// Stats Page
+exports.statsPage = async (req, res) => {
+  const { electionId } = req.params;
+  const election = await Election.getFullElectionById(electionId);
+
+  res.render("elections/stats", {
+    title: "Stats",
+    election,
+    electionId,
+    csrfToken: req.csrfToken(),
+  });
+};
