@@ -213,13 +213,16 @@ exports.createQuestion = async (req, res) => {
 exports.getSingleQuestion = async (req, res) => {
   const { questionId, electionId } = req.params;
   const question = await Question.findByPk(questionId);
+  const election = await Election.getElectionById(electionId);
   const options = await Option.findAll({
     where: {
       questionId,
     },
   });
+
   res.render("questions/single", {
     title: question.title,
+    election,
     question,
     options,
     questionId,
@@ -307,6 +310,13 @@ exports.createOption = async (req, res) => {
   const { questionId } = req.params;
 
   try {
+    // Check if election is launched
+    const election = await Election.getElectionById(electionId);
+    if (election.status != "created") {
+      req.flash("error", "Election is already launched/completed");
+      return res.redirect(`/elections/${electionId}/questions`);
+    }
+
     await Option.createOption(title, questionId);
     res.redirect(`/elections/${electionId}/questions/${questionId}`);
   } catch (error) {
@@ -342,6 +352,13 @@ exports.editOption = async (req, res) => {
   const { id: userId } = req.user;
 
   try {
+    // Check if election is launched
+    const election = await Election.getElectionById(electionId);
+    if (election.status != "created") {
+      req.flash("error", "Election is already launched/completed");
+      return res.redirect(`/elections/${electionId}/questions`);
+    }
+
     await Option.updateOption(userId, optionId, title);
     res.redirect(`/elections/${electionId}/questions/${questionId}`);
   } catch (error) {

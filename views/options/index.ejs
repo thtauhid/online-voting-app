@@ -5,6 +5,7 @@
     <% for (let option of options) { %>
     <li class="d-flex justify-content-between">
       <span id="option-<%= option.id %>"><%= option.title %></span>
+      <% if(election.status == 'created') { %>
       <span>
         <a
           href="/elections/<%= question.electionId %>/questions/<%= question.id %>/options/<%= option.id %>/edit"
@@ -12,6 +13,7 @@
         >
         <a href="#" onclick="deleteOption(<%= option.id %>)">Delete</a>
       </span>
+      <% } %>
     </li>
     <% } %>
   </ul>
@@ -20,6 +22,7 @@
   <% } %>
 </section>
 <section>
+  <% if(election.status == 'created') { %>
   <form
     action="/elections/<%= electionId %>/questions/<%= questionId %>/options"
     method="POST"
@@ -43,6 +46,8 @@
       </div>
     </div>
   </form>
+  <% } %>
+
   <div class="mt-3">
     <a href="/elections/<%= electionId %>/questions">Back to Questions</a>
   </div>
