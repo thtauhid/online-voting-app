@@ -22,6 +22,10 @@ https://voing-app.onrender.com/
 
 Startup may be slow due to the site going to sleep.
 
+## Check the video
+
+https://www.loom.com/share/43ee296d2ba4497989d25dc438529271
+
 ## Features Implemented
 
 - Election adminstrators are able to create an account
