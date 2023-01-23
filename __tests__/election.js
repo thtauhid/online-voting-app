@@ -105,6 +105,45 @@ describe("Election", () => {
 
     expect(response.statusCode).toBe(302);
     expect(response.header.location).toContain("/elections/1/questions");
+
+    // Checking if the question is edited
+    response = await agent.get("/elections/1/questions");
+    const $ = cherio.load(response.text);
+    const firstListItem = $("#question-2")[0].children[0].data;
+
+    expect(firstListItem).toContain("Test Question 2");
+  });
+
+  test("Delete a question", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/1/questions/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/1/questions").send({
+      title: "To Be Deleted Question",
+      description: "Test Description",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+    expect(response.header.location).toContain("/elections/1/questions/3");
+
+    res = await agent.get("/elections/1/questions/new");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.delete("/elections/1/questions/3").send({
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    // Checking if the question is deleted
+    response = await agent.get("/elections/1/questions");
+    const $ = cherio.load(response.text);
+    const firstListItem = $("#question-3")[0];
+
+    expect(firstListItem).toBe(undefined);
   });
 
   test("Create a option in question", async () => {
@@ -126,5 +165,66 @@ describe("Election", () => {
     const firstListItem = $("#option-1")[0].children[0].data;
 
     expect(firstListItem).toContain("Test Option");
+  });
+
+  test("Edit a option in question", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/1/questions/1/options/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/1/questions/1/options").send({
+      title: "Test Option",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    res = await agent.get("/elections/1/questions/1/options/1/edit");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.post("/elections/1/questions/1/options/1").send({
+      title: "Test Option 2",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    // Checking if the option is edited
+    response = await agent.get("/elections/1/questions/1");
+    const $ = cherio.load(response.text);
+    const firstListItem = $("#option-1")[0].children[0].data;
+
+    expect(firstListItem).toContain("Test Option 2");
+  });
+
+  test("Delete a option in question", async () => {
+    const agent = request.agent(server);
+    await login(agent, "john.doe2@example.com", "password");
+    let res = await agent.get("/elections/1/questions/1/options/new");
+    let csrfToken = getCsrfToken(res.text);
+
+    let response = await agent.post("/elections/1/questions/1/options").send({
+      title: "To Be Deleted Option",
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    res = await agent.get("/elections/1/questions/1");
+    csrfToken = getCsrfToken(res.text);
+
+    response = await agent.delete("/elections/1/questions/1/options/2").send({
+      _csrf: csrfToken,
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    // Checking if the option is deleted from the question
+    response = await agent.get("/elections/1/questions/1");
+    const $ = cherio.load(response.text);
+    const firstListItem = $("#option-2")[0];
+
+    expect(firstListItem).toBe(undefined);
   });
 });
