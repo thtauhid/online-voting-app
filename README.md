@@ -16,10 +16,6 @@ This project also utilizes the following libraries:
 - sequelize
 - tiny-csrf
 
-## Live Link
-
-https://voing-app.onrender.com/
-
 Startup may be slow due to the site going to sleep.
 
 ## Check the video
@@ -28,10 +24,10 @@ https://www.loom.com/share/43ee296d2ba4497989d25dc438529271
 
 ## Features Implemented
 
-- Election adminstrators are able to create an account
-- Election adminstrators are able login to their account
-- Election adminstrators are able to create election
-- Election adminstrators are able to add questions in election
-- Election adminstrators are able to add options in question
+- Election administrators are able to create an account
+- Election administrators are able login to their account
+- Election administrators are able to create election
+- Election administrators are able to add questions in the election
+- Election administrators are able to add options in question
 
 This app is work in progress. Stay tuned for updates.
